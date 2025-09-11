@@ -955,7 +955,8 @@ class TibiaBot(world: String)(implicit ex: ExecutionContextExecutor, mat: Materi
               // this is the actual embed description
               val atLevelText = I18nService.getMessage(guildId, MessageKeys.Deaths.AT_LEVEL, charDeath.death.level.toInt.toString)
               val killedByPrefix = I18nService.getMessage(guildId, MessageKeys.Deaths.KILLED_BY, "").split(":").head.trim // Get "Asesinado por" or "Killed by" part
-              var embedText = s"$guildText$context <t:$epochSecond:R> $atLevelText\n$killedByPrefix $killerText.$exivaList"
+              val relativeTime = I18nService.formatRelativeTime(guildId, epochSecond)
+              var embedText = s"$guildText$context $relativeTime $atLevelText\n$killedByPrefix $killerText.$exivaList"
 
               // if the length is over 4065 truncate it
               val embedLength = embedText.length

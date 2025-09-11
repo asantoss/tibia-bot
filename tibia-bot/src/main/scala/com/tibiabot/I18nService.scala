@@ -120,4 +120,39 @@ object I18nService extends StrictLogging {
   def parseLanguage(code: String): Option[Language] = {
     supportedLanguages.find(_.code.equalsIgnoreCase(code))
   }
+
+  /**
+   * Format relative time in the specified language using Java's internationalization
+   */
+  def formatRelativeTime(guildId: String, epochSecond: Long): String = {
+    import java.time.{Instant, ZonedDateTime, ZoneOffset}
+    import java.time.temporal.ChronoUnit
+    import java.text.NumberFormat
+    
+    val language = getGuildLanguage(guildId)
+    val deathTime = Instant.ofEpochSecond(epochSecond).atZone(ZoneOffset.UTC)
+    val now = ZonedDateTime.now(ZoneOffset.UTC)
+    
+    val seconds = ChronoUnit.SECONDS.between(deathTime, now)
+    val minutes = ChronoUnit.MINUTES.between(deathTime, now)
+    val hours = ChronoUnit.HOURS.between(deathTime, now)
+    val days = ChronoUnit.DAYS.between(deathTime, now)
+
+    // Use NumberFormat to ensure proper number formatting for the locale
+    val numberFormat = NumberFormat.getIntegerInstance(language.locale)
+
+    if (seconds < 60) {
+      if (seconds <= 5) {
+        getMessage(guildId, MessageKeys.Time.JUST_NOW)
+      } else {
+        getMessage(guildId, MessageKeys.Time.SECONDS_AGO, numberFormat.format(seconds))
+      }
+    } else if (minutes < 60) {
+      getMessage(guildId, MessageKeys.Time.MINUTES_AGO, numberFormat.format(minutes))
+    } else if (hours < 24) {
+      getMessage(guildId, MessageKeys.Time.HOURS_AGO, numberFormat.format(hours))
+    } else {
+      getMessage(guildId, MessageKeys.Time.DAYS_AGO, numberFormat.format(days))
+    }
+  }
 }
