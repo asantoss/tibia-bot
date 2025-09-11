@@ -61,10 +61,10 @@ object LanguageCommand extends StrictLogging {
               .setDescription(successMessage)
               .setColor(0x00FF00)
               .build()
-            event.replyEmbeds(embed).queue()
+            event.getHook.sendMessageEmbeds(embed).queue()
           } else {
             val errorMessage = I18nService.getMessage(guild.getId, "commands.language.set_error")
-            event.reply(errorMessage).setEphemeral(true).queue()
+            event.getHook.sendMessage(errorMessage).setEphemeral(true).queue()
           }
         case None =>
           val currentLanguage = I18nService.getGuildLanguage(guild.getId)
@@ -72,7 +72,7 @@ object LanguageCommand extends StrictLogging {
             s"• `${lang.code}` - ${lang.locale.getDisplayLanguage}"
           }.mkString("\n")
           val errorMessage = I18nService.getMessage(currentLanguage, "commands.language.invalid_language", languageCode, supportedList)
-          event.reply(errorMessage).setEphemeral(true).queue()
+          event.getHook.sendMessage(errorMessage).setEphemeral(true).queue()
       }
     } else if (showOption != null && showOption.getAsBoolean) {
       showCurrentLanguage(event, guild)
@@ -92,7 +92,7 @@ object LanguageCommand extends StrictLogging {
       .setColor(0x3498DB)
       .build()
     
-    event.replyEmbeds(embed).queue()
+    event.getHook.sendMessageEmbeds(embed).queue()
   }
   
   private def showLanguageHelp(event: SlashCommandInteractionEvent, guild: Guild): Unit = {
@@ -114,6 +114,6 @@ object LanguageCommand extends StrictLogging {
       .setColor(0x3498DB)
       .build()
     
-    event.replyEmbeds(embed).queue()
+    event.getHook.sendMessageEmbeds(embed).queue()
   }
 }
