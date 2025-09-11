@@ -62,6 +62,8 @@ class BotListener extends ListenerAdapter with StrictLogging {
           handleOnlineList(event)
         case "boosted" =>
           handleBoosted(event)
+        case "language" =>
+          LanguageCommand.handleCommand(event)
         case "leaderboards" =>
           handleLeaderboards(event)
         case _ =>
