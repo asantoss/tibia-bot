@@ -5919,10 +5919,6 @@ object BotApp extends App with StrictLogging {
     replyEmbed.setDescription(embedMessage).build()
   }
 
-  // Commented out - discordChannelMessageEmbed method
-  // This method was previously used to send embed messages to Discord channels
-  // Removed to fix compilation warnings about undefined variables in comments
-
   // Death screenshot database methods
   def storeDeathScreenshot(guildId: String, world: String, characterName: String, deathTime: Long, screenshotUrl: String, addedBy: String, messageId: String): Unit = {
     val url = s"jdbc:postgresql://${Config.postgresHost}:5432/_$guildId"
