@@ -5,6 +5,8 @@ import akka.stream.ActorAttributes.supervisionStrategy
 import akka.stream.scaladsl.{Flow, Keep, RunnableGraph, Sink, Source}
 import akka.stream.{Attributes, Materializer, Supervision}
 import com.tibiabot.BotApp.{alliedGuildsData, alliedPlayersData, discordsData, huntedGuildsData, huntedPlayersData, worldsData, activityData, customSortData, Players}
+import com.tibiabot.I18nService
+import com.tibiabot.MessageKeys
 import com.tibiabot.tibiadata.TibiaDataClient
 import com.tibiabot.tibiadata.response.{CharacterResponse, Deaths, OnlinePlayers, WorldResponse}
 import com.typesafe.scalalogging.StrictLogging
@@ -260,7 +262,7 @@ class TibiaBot(world: String)(implicit ex: ExecutionContextExecutor, mat: Materi
                         if (activityTextChannel.canTalk() || (!Config.prod)) {
                           // send message to activity channel
                           val activityEmbed = new EmbedBuilder()
-                          activityEmbed.setDescription(s"$charVocation **$charLevel** — **[$oldName](${charUrl(oldName)})** changed their name to **[$charName](${charUrl(charName)})**.")
+                          activityEmbed.setDescription(I18nService.getMessage(guild.getId, MessageKeys.Activity.NAME_CHANGE, charVocation, charLevel, oldName, charUrl(oldName), charName, charUrl(charName)))
                           activityEmbed.setColor(playerType)
                           activityEmbed.setThumbnail(Config.nameChangeThumbnail)
                           sendMessageWithRateLimit(activityTextChannel, embed = Some(activityEmbed))
@@ -310,7 +312,7 @@ class TibiaBot(world: String)(implicit ex: ExecutionContextExecutor, mat: Materi
                           if (activityTextChannel != null) {
                             if (activityTextChannel.canTalk() || (!Config.prod)) {
                               val activityEmbed = new EmbedBuilder()
-                              activityEmbed.setDescription(s"$charVocation **$charLevel** — **[$charName](${charUrl(charName)})** has left the **${guildType}** guild **[${guildNameFromActivityData}](${guildUrl(guildNameFromActivityData)})**.")
+                              activityEmbed.setDescription(I18nService.getMessage(guild.getId, MessageKeys.Activity.LEFT_GUILD, charVocation, charLevel, charName, charUrl(charName), guildType, guildNameFromActivityData, guildUrl(guildNameFromActivityData)))
                               activityEmbed.setColor(14397256)
                               activityEmbed.setThumbnail(Config.guildLeaveThumbnail)
                               sendMessageWithRateLimit(activityTextChannel, embed = Some(activityEmbed))
@@ -327,7 +329,7 @@ class TibiaBot(world: String)(implicit ex: ExecutionContextExecutor, mat: Materi
                                 case 36941 => Config.guildSwapGreen
                                 case _ => Config.guildSwapGrey
                               }
-                              activityEmbed.setDescription(s"$charVocation **$charLevel** — **[$charName](${charUrl(charName)})** has left the **${guildType}** guild **[${guildNameFromActivityData}](${guildUrl(guildNameFromActivityData)})** and joined the guild **[${guildName}](${guildUrl(guildName)})**.")
+                              activityEmbed.setDescription(I18nService.getMessage(guild.getId, MessageKeys.Activity.LEFT_JOINED_GUILD, charVocation, charLevel, charName, charUrl(charName), guildType, guildNameFromActivityData, guildUrl(guildNameFromActivityData), guildName, guildUrl(guildName)))
                               activityEmbed.setColor(colorType)
                               activityEmbed.setThumbnail(thumbnailType)
                               sendMessageWithRateLimit(activityTextChannel, embed = Some(activityEmbed))
@@ -343,7 +345,7 @@ class TibiaBot(world: String)(implicit ex: ExecutionContextExecutor, mat: Materi
                                 // send embed to admin channel
                                 val commandUser = s"<@${BotApp.botUser}>"
                                 val adminEmbed = new EmbedBuilder()
-                                adminEmbed.setTitle(":robot: enemy joined an allied guild:")
+                                adminEmbed.setTitle(I18nService.getMessage(guild.getId, MessageKeys.Admin.ENEMY_JOINED_ALLIED))
                                 adminEmbed.setDescription(s"$commandUser removed the player\n$charVocation **$charLevel** — **[$charName](${charUrl(charName)})**\nfrom the hunted list for **$world**\n*(they left a hunted guild & joined an allied one)*.")
                                 adminEmbed.setThumbnail(creatureImageUrl("Broom"))
                                 adminEmbed.setColor(14397256) // orange for bot auto command
@@ -365,7 +367,7 @@ class TibiaBot(world: String)(implicit ex: ExecutionContextExecutor, mat: Materi
                                 // send embed to admin channel
                                 val commandUser = s"<@${BotApp.botUser}>"
                                 val adminEmbed = new EmbedBuilder()
-                                adminEmbed.setTitle(":robot: enemy automatically detected:")
+                                adminEmbed.setTitle(I18nService.getMessage(guild.getId, MessageKeys.Admin.ENEMY_AUTO_DETECTED))
                                 adminEmbed.setDescription(s"$commandUser added the player\n$charVocation **$charLevel** — **[$charName](${charUrl(charName)})**\nto the hunted list for **$world**\n*(they left a hunted guild, so they will remain hunted)*.")
                                 adminEmbed.setThumbnail(creatureImageUrl("Stone_Coffin"))
                                 adminEmbed.setColor(14397256) // orange for bot auto command
@@ -397,7 +399,7 @@ class TibiaBot(world: String)(implicit ex: ExecutionContextExecutor, mat: Materi
                               // send embed to admin channel
                               val commandUser = s"<@${BotApp.botUser}>"
                               val adminEmbed = new EmbedBuilder()
-                              adminEmbed.setTitle(":robot: hunted list cleanup:")
+                              adminEmbed.setTitle(I18nService.getMessage(guild.getId, MessageKeys.Admin.HUNTED_LIST_CLEANUP))
                               adminEmbed.setDescription(s"$commandUser removed the player\n$charVocation **$charLevel** — **[$charName](${charUrl(charName)})**\nfrom the hunted list for **$world**\n*(because they have joined an enemy guild and will be tracked that way)*.")
                               adminEmbed.setThumbnail(creatureImageUrl("Broom"))
                               adminEmbed.setColor(14397256) // orange for bot auto command
@@ -415,7 +417,7 @@ class TibiaBot(world: String)(implicit ex: ExecutionContextExecutor, mat: Materi
                               // send embed to admin channel
                               val commandUser = s"<@${BotApp.botUser}>"
                               val adminEmbed = new EmbedBuilder()
-                              adminEmbed.setTitle(":robot: hunted list cleanup:")
+                              adminEmbed.setTitle(I18nService.getMessage(guild.getId, MessageKeys.Admin.HUNTED_LIST_CLEANUP))
                               adminEmbed.setDescription(s"$commandUser removed the player\n$charVocation **$charLevel** — **[$charName](${charUrl(charName)})**\nfrom the hunted list for **$world**\n*(because they have joined an allied guild and will be tracked that way)*.")
                               adminEmbed.setThumbnail(creatureImageUrl("Broom"))
                               adminEmbed.setColor(14397256) // orange for bot auto command
@@ -432,7 +434,7 @@ class TibiaBot(world: String)(implicit ex: ExecutionContextExecutor, mat: Materi
                               case "allied" => Config.guildJoinGreen
                               case _ => Config.guildJoinGrey
                             }
-                            activityEmbed.setDescription(s"$charVocation **$charLevel** — **[$charName](${charUrl(charName)})** joined the **${guildType}** guild **[${guildName}](${guildUrl(guildName)})**.")
+                            activityEmbed.setDescription(I18nService.getMessage(guild.getId, MessageKeys.Activity.JOINED_GUILD, charVocation, charLevel, charName, charUrl(charName), guildType, guildName, guildUrl(guildName)))
                             activityEmbed.setColor(colorType)
                             activityEmbed.setThumbnail(thumbnailType)
                             sendMessageWithRateLimit(activityTextChannel, embed = Some(activityEmbed))
@@ -469,7 +471,7 @@ class TibiaBot(world: String)(implicit ex: ExecutionContextExecutor, mat: Materi
                           // send embed to admin channel
                           val commandUser = s"<@${BotApp.botUser}>"
                           val adminEmbed = new EmbedBuilder()
-                          adminEmbed.setTitle(":robot: hunted list cleanup:")
+                          adminEmbed.setTitle(I18nService.getMessage(guild.getId, MessageKeys.Admin.HUNTED_LIST_CLEANUP))
                           adminEmbed.setDescription(s"$commandUser removed the player\n$charVocation **$charLevel** — **[$charName](${charUrl(charName)})**\nfrom the hunted list for **$world**\n*(because they have joined an enemy guild and will be tracked that way)*.")
                           adminEmbed.setThumbnail(creatureImageUrl("Broom"))
                           adminEmbed.setColor(14397256) // orange for bot auto command
@@ -489,7 +491,7 @@ class TibiaBot(world: String)(implicit ex: ExecutionContextExecutor, mat: Materi
                           // send embed to admin channel
                           val commandUser = s"<@${BotApp.botUser}>"
                           val adminEmbed = new EmbedBuilder()
-                          adminEmbed.setTitle(":robot: allied list cleanup:")
+                          adminEmbed.setTitle(I18nService.getMessage(guild.getId, MessageKeys.Admin.ALLIED_LIST_CLEANUP))
                           adminEmbed.setDescription(s"$commandUser removed the player\n$charVocation **$charLevel** — **[$charName](${charUrl(charName)})**\nfrom the allied list for **$world**\n*(because they have joined an allied guild and will be tracked that way)*.")
                           adminEmbed.setThumbnail(creatureImageUrl("Broom"))
                           adminEmbed.setColor(14397256) // orange for bot auto command
@@ -509,7 +511,7 @@ class TibiaBot(world: String)(implicit ex: ExecutionContextExecutor, mat: Materi
                           case "allied" => Config.guildJoinGreen
                           case _ => Config.guildJoinGrey
                         }
-                        activityEmbed.setDescription(s"$charVocation **$charLevel** — **[$charName](${charUrl(charName)})** joined the **${guildType}** guild **[${guildName}](${guildUrl(guildName)})**.")
+                        activityEmbed.setDescription(I18nService.getMessage(guild.getId, MessageKeys.Activity.JOINED_GUILD, charVocation, charLevel, charName, charUrl(charName), guildType, guildName, guildUrl(guildName)))
                         activityEmbed.setColor(colorType)
                         activityEmbed.setThumbnail(thumbnailType)
                         sendMessageWithRateLimit(activityTextChannel, embed = Some(activityEmbed))
@@ -919,7 +921,7 @@ class TibiaBot(world: String)(implicit ex: ExecutionContextExecutor, mat: Materi
                             // send embed to admin channel
                             val commandUser = s"<@${BotApp.botUser}>"
                             val adminEmbed = new EmbedBuilder()
-                            adminEmbed.setTitle(":robot: enemy automatically detected:")
+                            adminEmbed.setTitle(I18nService.getMessage(guild.getId, MessageKeys.Admin.ENEMY_AUTO_DETECTED))
                             adminEmbed.setDescription(s"$commandUser added the player\n$vocation **$level** — **[$player](${charUrl(player)})**\nto the hunted list for **$world**\n*(they killed the allied player **[${charName}](${charUrl(charName)})***.")
                             adminEmbed.setThumbnail(creatureImageUrl("Dark_Mage_Statue"))
                             adminEmbed.setColor(14397256) // orange for bot auto command

@@ -21,7 +21,7 @@ object LanguageCommand extends StrictLogging {
       s"${lang.code} (${lang.locale.getDisplayLanguage})"
     }.mkString(", ")
     
-    Commands.slash("language", "Configure the bot's language for this server")
+    Commands.slash("language", I18nService.getMessage("en", MessageKeys.Commands.LANGUAGE_DESCRIPTION))
       .addOptions(
         new OptionData(OptionType.STRING, "set", s"Set language. Options: $languageOptions")
           .setRequired(false),

@@ -189,17 +189,17 @@ class BotListener extends ListenerAdapter with StrictLogging {
          inputName = shortName(inputName)
        }
        if (id == "boosted add") {
-         val newEmbed = BotApp.boosted(user.getId, "add", inputName)
+         val newEmbed = BotApp.boosted(event.getGuild().getId(), user.getId, "add", inputName)
          event.getHook().editOriginalEmbeds(newEmbed).setActionRow(
-           Button.success("boosted add", "Add"),
-           Button.danger("boosted remove", "Remove"),
+           Button.success("boosted add", I18nService.getMessage(event.getGuild.getId, MessageKeys.Buttons.ADD)),
+           Button.danger("boosted remove", I18nService.getMessage(event.getGuild.getId, MessageKeys.Buttons.REMOVE)),
            Button.secondary("boosted toggle", " ").withEmoji(Emoji.fromFormatted(Config.torchOffEmoji))
          ).queue()
        } else if (id == "boosted remove") {
-         val newEmbed = BotApp.boosted(user.getId, "remove", inputName)
+         val newEmbed = BotApp.boosted(event.getGuild().getId(), user.getId, "remove", inputName)
          event.getHook().editOriginalEmbeds(newEmbed).setActionRow(
-           Button.success("boosted add", "Add"),
-           Button.danger("boosted remove", "Remove"),
+           Button.success("boosted add", I18nService.getMessage(event.getGuild.getId, MessageKeys.Buttons.ADD)),
+           Button.danger("boosted remove", I18nService.getMessage(event.getGuild.getId, MessageKeys.Buttons.REMOVE)),
            Button.secondary("boosted toggle", " ").withEmoji(Emoji.fromFormatted(Config.torchOffEmoji))
          ).queue()
        } else if (id == "galthen add") {
@@ -225,7 +225,7 @@ class BotListener extends ListenerAdapter with StrictLogging {
                  s"${Config.satchelEmoji} can be collected by $displayTag <t:$when:R>"
              }
              if (fullList.nonEmpty) {
-               newEmbed.setTitle("Existing Cooldowns:")
+               newEmbed.setTitle(I18nService.getMessage(event.getGuild.getId, MessageKeys.Embeds.EXISTING_COOLDOWNS))
                if (fullList.size == 1) {
                  oneRecord = true
                  editedMessage = fullList.mkString
@@ -249,14 +249,14 @@ class BotListener extends ListenerAdapter with StrictLogging {
          newEmbed.setDescription(editedMessage + replyMessage)
          if (oneRecord) {
            event.getHook().editOriginalEmbeds(newEmbed.build).setActionRow(
-               Button.success("galthenAdd", "Add Cooldown").withEmoji(Emoji.fromFormatted(Config.satchelEmoji)),
-               Button.danger("galthenRemoveAll", "Remove")
+               Button.success("galthenAdd", I18nService.getMessage(event.getGuild.getId, MessageKeys.Buttons.ADD_COOLDOWN)).withEmoji(Emoji.fromFormatted(Config.satchelEmoji)),
+               Button.danger("galthenRemoveAll", I18nService.getMessage(event.getGuild.getId, MessageKeys.Buttons.REMOVE))
              ).queue()
          } else {
            event.getHook().editOriginalEmbeds(newEmbed.build).setActionRow(
-               Button.success("galthenAdd", "Add Cooldown").withEmoji(Emoji.fromFormatted(Config.satchelEmoji)),
-               Button.danger("galthenButtonRem", "Remove"),
-               Button.secondary("galthenRemoveAll", "Clear All")
+               Button.success("galthenAdd", I18nService.getMessage(event.getGuild.getId, MessageKeys.Buttons.ADD_COOLDOWN)).withEmoji(Emoji.fromFormatted(Config.satchelEmoji)),
+               Button.danger("galthenButtonRem", I18nService.getMessage(event.getGuild.getId, MessageKeys.Buttons.REMOVE)),
+               Button.secondary("galthenRemoveAll", I18nService.getMessage(event.getGuild.getId, MessageKeys.Buttons.CLEAR_ALL))
              ).queue()
          }
        } else if (id == "galthen rem") {
@@ -281,7 +281,7 @@ class BotListener extends ListenerAdapter with StrictLogging {
                  s"${Config.satchelEmoji} can be collected by $displayTag <t:$when:R>"
              }
              if (fullList.nonEmpty) {
-               newEmbed.setTitle("Existing Cooldowns:")
+               newEmbed.setTitle(I18nService.getMessage(event.getGuild.getId, MessageKeys.Embeds.EXISTING_COOLDOWNS))
                if (fullList.size == 1) {
                  oneRecord = true
                  editedMessage = fullList.mkString
@@ -305,14 +305,14 @@ class BotListener extends ListenerAdapter with StrictLogging {
          newEmbed.setDescription(editedMessage + replyMessage)
          if (oneRecord) {
            event.getHook().editOriginalEmbeds(newEmbed.build).setActionRow(
-               Button.success("galthenAdd", "Add Cooldown").withEmoji(Emoji.fromFormatted(Config.satchelEmoji)),
-               Button.danger("galthenRemoveAll", "Remove")
+               Button.success("galthenAdd", I18nService.getMessage(event.getGuild.getId, MessageKeys.Buttons.ADD_COOLDOWN)).withEmoji(Emoji.fromFormatted(Config.satchelEmoji)),
+               Button.danger("galthenRemoveAll", I18nService.getMessage(event.getGuild.getId, MessageKeys.Buttons.REMOVE))
              ).queue()
          } else {
            event.getHook().editOriginalEmbeds(newEmbed.build).setActionRow(
-               Button.success("galthenAdd", "Add Cooldown").withEmoji(Emoji.fromFormatted(Config.satchelEmoji)),
-               Button.danger("galthenButtonRem", "Remove"),
-               Button.secondary("galthenRemoveAll", "Clear All")
+               Button.success("galthenAdd", I18nService.getMessage(event.getGuild.getId, MessageKeys.Buttons.ADD_COOLDOWN)).withEmoji(Emoji.fromFormatted(Config.satchelEmoji)),
+               Button.danger("galthenButtonRem", I18nService.getMessage(event.getGuild.getId, MessageKeys.Buttons.REMOVE)),
+               Button.secondary("galthenRemoveAll", I18nService.getMessage(event.getGuild.getId, MessageKeys.Buttons.CLEAR_ALL))
              ).queue()
          }
        }
@@ -367,7 +367,7 @@ class BotListener extends ListenerAdapter with StrictLogging {
                          val latestScreenshot = if (screenshots.nonEmpty) screenshots.last else null
                          val buttons = if (screenshotCount > 1) {
                            val baseButtons = List(
-                             Button.secondary(s"death_screenshot_${charName}_${deathTime}_${messageId}", "Add Screenshot"),
+                             Button.secondary(s"death_screenshot_${charName}_${deathTime}_${messageId}", I18nService.getMessage(event.getGuild.getId, MessageKeys.UI.ADD_SCREENSHOT_BUTTON)),
                              Button.primary(s"prev_screenshot_${charName}_${deathTime}_${messageId}_0", "◀"),
                              Button.secondary(s"screenshot_info_${charName}_${deathTime}_${messageId}", s"1/${screenshotCount}").asDisabled(),
                              Button.primary(s"next_screenshot_${charName}_${deathTime}_${messageId}_0", "▶")
@@ -381,7 +381,7 @@ class BotListener extends ListenerAdapter with StrictLogging {
                              baseButtons
                            }
                          } else {
-                           val baseButtons = List(Button.secondary(s"death_screenshot_${charName}_${deathTime}_${messageId}", "Add Screenshot"))
+                           val baseButtons = List(Button.secondary(s"death_screenshot_${charName}_${deathTime}_${messageId}", I18nService.getMessage(event.getGuild.getId, MessageKeys.UI.ADD_SCREENSHOT_BUTTON)))
                            val memberCheck = guild.getMember(event.getUser)
                            val userNameCheck = if (memberCheck != null && memberCheck.getNickname != null) memberCheck.getNickname else event.getUser.getName
                            val isAdmin = memberCheck != null && memberCheck.hasPermission(net.dv8tion.jda.api.Permission.ADMINISTRATOR)
@@ -400,7 +400,7 @@ class BotListener extends ListenerAdapter with StrictLogging {
                    }
                    
                    val successEmbed = new EmbedBuilder()
-                     .setDescription(s"${Config.yesEmoji} Screenshot added successfully!")
+                     .setDescription(s"${Config.yesEmoji} ${I18nService.getMessage(event.getGuild.getId, MessageKeys.Screenshots.ADDED_SUCCESS)}")
                      .setColor(36941)
                      .build()
                    event.getHook.sendMessageEmbeds(successEmbed).setEphemeral(true).queue()
@@ -408,28 +408,28 @@ class BotListener extends ListenerAdapter with StrictLogging {
                    case ex: Exception =>
                      logger.error(s"Failed to store death screenshot: ${ex.getMessage}")
                      val errorEmbed = new EmbedBuilder()
-                       .setDescription(s"${Config.noEmoji} Failed to save screenshot. Please try again.")
+                       .setDescription(s"${Config.noEmoji} ${I18nService.getMessage(event.getGuild.getId, MessageKeys.Screenshots.SAVE_FAILED)}")
                        .setColor(13631488)
                        .build()
                      event.getHook.sendMessageEmbeds(errorEmbed).setEphemeral(true).queue()
                  }
                case None =>
                  val errorEmbed = new EmbedBuilder()
-                   .setDescription(s"${Config.noEmoji} Could not determine world for this guild.")
+                   .setDescription(s"${Config.noEmoji} ${I18nService.getMessage(event.getGuild.getId, MessageKeys.Screenshots.WORLD_ERROR)}")
                    .setColor(13631488)
                    .build()
                  event.getHook.sendMessageEmbeds(errorEmbed).setEphemeral(true).queue()
              }
            } else {
              val errorEmbed = new EmbedBuilder()
-               .setDescription(s"${Config.noEmoji} Please provide a valid image URL (PNG, JPG, GIF, WEBP) from a supported host.")
+               .setDescription(s"${Config.noEmoji} ${I18nService.getMessage(event.getGuild.getId, MessageKeys.Screenshots.INVALID_URL)}")
                .setColor(13631488)
                .build()
              event.getHook.sendMessageEmbeds(errorEmbed).setEphemeral(true).queue()
            }
          } else {
            val errorEmbed = new EmbedBuilder()
-             .setDescription(s"${Config.noEmoji} Please provide a screenshot URL.")
+             .setDescription(s"${Config.noEmoji} ${I18nService.getMessage(event.getGuild.getId, MessageKeys.Screenshots.NO_URL)}")
              .setColor(13631488)
              .build()
            event.getHook.sendMessageEmbeds(errorEmbed).setEphemeral(true).queue()
@@ -447,7 +447,7 @@ class BotListener extends ListenerAdapter with StrictLogging {
     var responseText = s"${Config.noEmoji} An unknown error occured, please try again."
 
     val footer = if (!embed.isEmpty) Option(embed.get(0).getFooter) else None
-    val tagId = footer.map(_.getText.replace("Tag: ", "")).getOrElse("")
+    val tagId = footer.map(_.getText.replace(I18nService.getMessage(event.getGuild.getId, MessageKeys.UI.TAG_PREFIX), "")).getOrElse("")
 
     /**
     if (button == "galthen board") {
@@ -463,21 +463,21 @@ class BotListener extends ListenerAdapter with StrictLogging {
               s"<:satchel:1030348072577945651> can be collected by $displayTag <t:$when:R>"
           } else {
             embed.setColor(178877)
-            embed.setDescription("This is a **[Galthen's Satchel](https://tibia.fandom.com/wiki/Galthen's_Satchel)** cooldown tracker.\nMark the <:satchel:1030348072577945651> as **Collected** and I will message you: ```when the 30 day cooldown expires```")
+            embed.setDescription(I18nService.getMessage(event.getGuild.getId, MessageKeys.Satchel.DESCRIPTION))
             embed.setThumbnail("https://tibia.fandom.com/wiki/Special:Redirect/file/Galthen's_Satchel.gif")
             event.getHook.sendMessageEmbeds(embed.build()).addActionRow(
-              Button.success("galthenSet", "Collected"),
-              Button.danger("galthenRemove", "Clear").asDisabled
+              Button.success("galthenSet", I18nService.getMessage(event.getGuild.getId, MessageKeys.Satchel.COLLECTED)),
+              Button.danger("galthenRemove", I18nService.getMessage(event.getGuild.getId, MessageKeys.Buttons.CLEAR)).asDisabled
             ).queue()
           }
         // /HERE
         case None =>
           embed.setColor(178877)
-          embed.setDescription("This is a **[Galthen's Satchel](https://tibia.fandom.com/wiki/Galthen's_Satchel)** cooldown tracker.\nMark the <:satchel:1030348072577945651> as **Collected** and I will message you: ```when the 30 day cooldown expires```")
+          embed.setDescription(I18nService.getMessage(event.getGuild.getId, MessageKeys.Satchel.DESCRIPTION))
           embed.setThumbnail("https://tibia.fandom.com/wiki/Special:Redirect/file/Galthen's_Satchel.gif")
           event.getHook.sendMessageEmbeds(embed.build()).addActionRow(
-            Button.success("galthenSet", "Collected"),
-            Button.danger("galthenRemove", "Clear").asDisabled
+            Button.success("galthenSet", I18nService.getMessage(event.getGuild.getId, MessageKeys.Satchel.COLLECTED)),
+            Button.danger("galthenRemove", I18nService.getMessage(event.getGuild.getId, MessageKeys.Buttons.CLEAR)).asDisabled
           ).queue()
       }
     } else
@@ -510,14 +510,14 @@ class BotListener extends ListenerAdapter with StrictLogging {
     } else if (button == "galthenLock") {
       event.deferEdit().queue()
       event.getHook().editOriginalComponents(ActionRow.of(
-        Button.secondary("galthenUnLock", "🔓"),
-        Button.danger("galthenRemoveAll", "Clear All")
+        Button.secondary("galthenUnLock", I18nService.getMessage(event.getGuild.getId, MessageKeys.Buttons.UNLOCK)),
+        Button.danger("galthenRemoveAll", I18nService.getMessage(event.getGuild.getId, MessageKeys.Buttons.CLEAR_ALL))
       )).queue();
     } else if (button == "galthenUnLock") {
       event.deferEdit().queue()
       event.getHook().editOriginalComponents(ActionRow.of(
-        Button.secondary("galthenLock", "🔒"),
-        Button.danger("galthenRemoveAll", "Clear All").asDisabled
+        Button.secondary("galthenLock", I18nService.getMessage(event.getGuild.getId, MessageKeys.Buttons.LOCK)),
+        Button.danger("galthenRemoveAll", I18nService.getMessage(event.getGuild.getId, MessageKeys.Buttons.CLEAR_ALL)).asDisabled
       )).queue();
     } else if (button == "galthenRemind") { // WIP
       event.deferEdit().queue()
@@ -526,22 +526,22 @@ class BotListener extends ListenerAdapter with StrictLogging {
       val tagDisplay = if (tagId == "") s"<@${event.getUser.getId}>" else s"**`$tagId`**"
       responseText = s"${Config.satchelEmoji} can be collected by $tagDisplay <t:$when:R>"
       event.getHook().editOriginalComponents().queue();
-      val newEmbed = new EmbedBuilder().setDescription(responseText).setColor(178877).setFooter("You will be sent a message when the cooldown expires").build()
+      val newEmbed = new EmbedBuilder().setDescription(responseText).setColor(178877).setFooter(I18nService.getMessage(event.getGuild.getId, MessageKeys.Satchel.FOOTER)).build()
       event.getHook().editOriginalEmbeds(newEmbed).queue()
     } else if (button == "galthenClear") { // WIP
       event.deferEdit().queue()
       event.getHook().editOriginalComponents().queue()
     } else if (button == "galthenAdd") {
-      val inputWindow = TextInput.create("galthen add", "Tag/Name for this cooldown", TextInputStyle.SHORT)
-        .setPlaceholder("Character Name or Tag to Add")
+      val inputWindow = TextInput.create("galthen add", I18nService.getMessage(event.getGuild.getId, MessageKeys.Modal.GALTHEN_ADD_LABEL), TextInputStyle.SHORT)
+        .setPlaceholder(I18nService.getMessage(event.getGuild.getId, MessageKeys.Modal.GALTHEN_ADD_PLACEHOLDER))
         .build()
-      val modal = Modal.create("add galthen", "Add a Galthen Satchel cooldown").addComponents(ActionRow.of(inputWindow)).build()
+      val modal = Modal.create("add galthen", I18nService.getMessage(event.getGuild.getId, MessageKeys.Modal.GALTHEN_ADD_TITLE)).addComponents(ActionRow.of(inputWindow)).build()
       event.replyModal(modal).queue()
     } else if (button == "galthenButtonRem") {
-      val inputWindow = TextInput.create("galthen rem", "Tag/Name for the cooldown", TextInputStyle.SHORT)
-        .setPlaceholder("Character Name or Tag to Remove")
+      val inputWindow = TextInput.create("galthen rem", I18nService.getMessage(event.getGuild.getId, MessageKeys.Modal.GALTHEN_REMOVE_LABEL), TextInputStyle.SHORT)
+        .setPlaceholder(I18nService.getMessage(event.getGuild.getId, MessageKeys.Modal.GALTHEN_REMOVE_PLACEHOLDER))
         .build()
-      val modal = Modal.create("rem galthen", "Remove a Galthen Satchel cooldown").addComponents(ActionRow.of(inputWindow)).build()
+      val modal = Modal.create("rem galthen", I18nService.getMessage(event.getGuild.getId, MessageKeys.Modal.GALTHEN_REMOVE_TITLE)).addComponents(ActionRow.of(inputWindow)).build()
       event.replyModal(modal).queue()
     } else if (button == "boosted") {
       event.deferReply(true).queue()
@@ -551,28 +551,28 @@ class BotListener extends ListenerAdapter with StrictLogging {
       replyEmbed.setDescription(responseText)
       event.getHook.sendMessageEmbeds(replyEmbed.build()).queue()
     } else if (button == "boosted add") {
-      val inputWindow = TextInput.create("boosted add", "Boss or Creature name", TextInputStyle.SHORT)
-        .setPlaceholder("Grand Master Oberon")
+      val inputWindow = TextInput.create("boosted add", I18nService.getMessage(event.getGuild.getId, MessageKeys.Modal.BOOSTED_ADD_LABEL), TextInputStyle.SHORT)
+        .setPlaceholder(I18nService.getMessage(event.getGuild.getId, MessageKeys.Modal.BOOSTED_ADD_PLACEHOLDER))
         .build()
-      val modal = Modal.create("add modal", "Add a Boss or Creature").addComponents(ActionRow.of(inputWindow)).build()
+      val modal = Modal.create("add modal", I18nService.getMessage(event.getGuild.getId, MessageKeys.Modal.BOOSTED_ADD_TITLE)).addComponents(ActionRow.of(inputWindow)).build()
       event.replyModal(modal).queue()
     } else if (button == "boosted remove") {
 
-      val inputWindow = TextInput.create("boosted remove", "Boss or Creature name", TextInputStyle.SHORT).build()
-      val modal = Modal.create("remove modal", "Add Server Save Notificiations:").addComponents(ActionRow.of(inputWindow)).build()
+      val inputWindow = TextInput.create("boosted remove", I18nService.getMessage(event.getGuild.getId, MessageKeys.Modal.BOOSTED_REMOVE_LABEL), TextInputStyle.SHORT).build()
+      val modal = Modal.create("remove modal", I18nService.getMessage(event.getGuild.getId, MessageKeys.Modal.BOOSTED_REMOVE_TITLE)).addComponents(ActionRow.of(inputWindow)).build()
       event.replyModal(modal).queue()
     } else if (button == "boosted list") {
       event.deferReply(true).queue()
       val allCheck = BotApp.boostedList(event.getUser.getId)
       if (allCheck) {
-        val embed = BotApp.boosted(event.getUser.getId, "list", "")
+        val embed = BotApp.boosted(event.getGuild().getId(), event.getUser.getId, "list", "")
         event.getHook.sendMessageEmbeds(embed).setActionRow(
-          Button.success("boosted add", "Add").asDisabled,
-          Button.danger("boosted remove", "Remove").asDisabled,
+          Button.success("boosted add", I18nService.getMessage(event.getGuild.getId, MessageKeys.Buttons.ADD)).asDisabled,
+          Button.danger("boosted remove", I18nService.getMessage(event.getGuild.getId, MessageKeys.Buttons.REMOVE)).asDisabled,
           Button.secondary("boosted toggle", " ").withEmoji(Emoji.fromFormatted(Config.torchOnEmoji))
         ).queue()
       } else {
-        val embed = BotApp.boosted(event.getUser.getId, "list", "")
+        val embed = BotApp.boosted(event.getGuild().getId(), event.getUser.getId, "list", "")
         event.getHook.sendMessageEmbeds(embed).setActionRow(
           Button.success("boosted add", "Add"),
           Button.danger("boosted remove", "Remove"),
@@ -584,17 +584,17 @@ class BotListener extends ListenerAdapter with StrictLogging {
 
       val allCheck = BotApp.boostedList(event.getUser.getId)
       if (allCheck) {
-        val embed = BotApp.boosted(event.getUser.getId, "toggle", "all")
+        val embed = BotApp.boosted(event.getGuild().getId(), event.getUser.getId, "toggle", "all")
         event.getHook.editOriginalEmbeds(embed).setActionRow(
           Button.success("boosted add", "Add"),
           Button.danger("boosted remove", "Remove"),
           Button.secondary("boosted toggle", " ").withEmoji(Emoji.fromFormatted(Config.torchOffEmoji))
         ).queue()
       } else {
-        val embed = BotApp.boosted(event.getUser.getId, "toggle", "all")
+        val embed = BotApp.boosted(event.getGuild().getId(), event.getUser.getId, "toggle", "all")
         event.getHook.editOriginalEmbeds(embed).setActionRow(
-          Button.success("boosted add", "Add").asDisabled,
-          Button.danger("boosted remove", "Remove").asDisabled,
+          Button.success("boosted add", I18nService.getMessage(event.getGuild.getId, MessageKeys.Buttons.ADD)).asDisabled,
+          Button.danger("boosted remove", I18nService.getMessage(event.getGuild.getId, MessageKeys.Buttons.REMOVE)).asDisabled,
           Button.secondary("boosted toggle", " ").withEmoji(Emoji.fromFormatted(Config.torchOnEmoji))
         ).queue()
       }
@@ -607,9 +607,9 @@ class BotListener extends ListenerAdapter with StrictLogging {
         //
         case Some(satchelTimeList) if satchelTimeList.isEmpty =>
           embed.setColor(3092790)
-          embed.setDescription(s"Mark the ${Config.satchelEmoji} as **Collected** and I will message you when the 30 day cooldown expires.")
+          embed.setDescription(I18nService.getMessage(event.getGuild.getId, MessageKeys.Satchel.INSTRUCTIONS, Config.satchelEmoji))
           event.getHook.sendMessageEmbeds(embed.build()).addActionRow(
-            Button.success("galthenSet", "Collected").withEmoji(Emoji.fromFormatted(Config.satchelEmoji))
+            Button.success("galthenSet", I18nService.getMessage(event.getGuild.getId, MessageKeys.Buttons.COLLECTED)).withEmoji(Emoji.fromFormatted(Config.satchelEmoji))
           ).queue()
         //
         case Some(satchelTimeList) =>
@@ -620,7 +620,7 @@ class BotListener extends ListenerAdapter with StrictLogging {
               s"${Config.satchelEmoji} can be collected by $displayTag <t:$when:R>"
           }
           if (fullList.nonEmpty) {
-            embed.setTitle("Existing Cooldowns:")
+            embed.setTitle(I18nService.getMessage(event.getGuild.getId, MessageKeys.Embeds.EXISTING_COOLDOWNS))
             val descriptionTruncate = fullList.mkString("\n")
             if (descriptionTruncate.length > 4050) {
               val truncatedDescription = descriptionTruncate.substring(0, 4050)
@@ -633,29 +633,29 @@ class BotListener extends ListenerAdapter with StrictLogging {
             embed.setColor(3092790)
             if (fullList.size == 1){
               event.getHook.sendMessageEmbeds(embed.build()).addActionRow(
-                Button.success("galthenAdd", "Add Cooldown").withEmoji(Emoji.fromFormatted(Config.satchelEmoji)), //WIP
-                Button.danger("galthenRemoveAll", "Remove")
+                Button.success("galthenAdd", I18nService.getMessage(event.getGuild.getId, MessageKeys.Buttons.ADD_COOLDOWN)).withEmoji(Emoji.fromFormatted(Config.satchelEmoji)), //WIP
+                Button.danger("galthenRemoveAll", I18nService.getMessage(event.getGuild.getId, MessageKeys.Buttons.REMOVE))
               ).queue()
             } else {
               event.getHook.sendMessageEmbeds(embed.build()).addActionRow(
-                Button.success("galthenAdd", "Add Cooldown").withEmoji(Emoji.fromFormatted(Config.satchelEmoji)),
-                Button.danger("galthenButtonRem", "Remove"),
-                Button.secondary("galthenRemoveAll", "Clear All")
+                Button.success("galthenAdd", I18nService.getMessage(event.getGuild.getId, MessageKeys.Buttons.ADD_COOLDOWN)).withEmoji(Emoji.fromFormatted(Config.satchelEmoji)),
+                Button.danger("galthenButtonRem", I18nService.getMessage(event.getGuild.getId, MessageKeys.Buttons.REMOVE)),
+                Button.secondary("galthenRemoveAll", I18nService.getMessage(event.getGuild.getId, MessageKeys.Buttons.CLEAR_ALL))
               ).queue()
             }
           } else {
             embed.setColor(3092790)
-            embed.setDescription(s"Mark the ${Config.satchelEmoji} as **Collected** and I will message you when the 30 day cooldown expires.")
+            embed.setDescription(I18nService.getMessage(event.getGuild.getId, MessageKeys.Satchel.INSTRUCTIONS, Config.satchelEmoji))
             event.getHook.sendMessageEmbeds(embed.build()).addActionRow(
-              Button.success("galthenSet", "Collected").withEmoji(Emoji.fromFormatted(Config.satchelEmoji))
+              Button.success("galthenSet", I18nService.getMessage(event.getGuild.getId, MessageKeys.Buttons.COLLECTED)).withEmoji(Emoji.fromFormatted(Config.satchelEmoji))
             ).queue()
           }
         // /HERE
         case None =>
           embed.setColor(3092790)
-          embed.setDescription(s"Mark the ${Config.satchelEmoji} as **Collected** and I will message you when the 30 day cooldown expires.")
+          embed.setDescription(I18nService.getMessage(event.getGuild.getId, MessageKeys.Satchel.INSTRUCTIONS, Config.satchelEmoji))
           event.getHook.sendMessageEmbeds(embed.build()).addActionRow(
-            Button.success("galthenSet", "Collected").withEmoji(Emoji.fromFormatted(Config.satchelEmoji))
+            Button.success("galthenSet", I18nService.getMessage(event.getGuild.getId, MessageKeys.Buttons.COLLECTED)).withEmoji(Emoji.fromFormatted(Config.satchelEmoji))
           ).queue()
         //
       }
@@ -682,25 +682,23 @@ class BotListener extends ListenerAdapter with StrictLogging {
             event.getUser.openPrivateChannel().queue(privateChannel => {
               val embed = new EmbedBuilder()
                 .setColor(3092790)
-                .setTitle(s"Upload Screenshot for ${charName}")
-                .setDescription(s"Please upload an image file (PNG, JPG, GIF, WebP) to this DM within the next 5 minutes.\n\n" +
-                              s"The screenshot will be added to the death message for **${charName}** in **${guild.getName}**.")
-                .setFooter("You can also paste an image directly from your clipboard")
+                .setTitle(I18nService.getMessage(event.getGuild.getId, MessageKeys.Tips.DM_UPLOAD, charName))
+                .setDescription(I18nService.getMessage(event.getGuild.getId, MessageKeys.Screenshots.DM_INSTRUCTIONS, charName, s"death message in **${guild.getName}**"))
+                .setFooter(I18nService.getMessage(event.getGuild.getId, MessageKeys.Tips.SCREENSHOT_PASTE))
                 .build()
               
               privateChannel.sendMessageEmbeds(embed).queue(
                 _ => {
                   // Confirm to user that DM was sent
-                  event.reply(s"✅ Screenshot upload request sent to your DMs for **${charName}**.").setEphemeral(true).queue()
+                  event.reply(I18nService.getMessage(event.getGuild.getId, MessageKeys.Screenshots.DM_SENT, charName)).setEphemeral(true).queue()
                 },
                 error => {
                   // Fallback if DM fails
                   val fallbackEmbed = new EmbedBuilder()
                     .setColor(16711680) // Red color
-                    .setTitle(s"Upload Screenshot for ${charName}")
-                    .setDescription(s"Could not send you a DM. Please upload an image file (PNG, JPG, GIF, WebP) in this channel within the next 5 minutes, If you wish to cancel, simply respond with the word **cancel**.\n\n" +
-                                  s"The screenshot will be added to the death message for **${charName}**.")
-                    .setFooter("You can also paste an image directly from your clipboard")
+                    .setTitle(I18nService.getMessage(event.getGuild.getId, MessageKeys.Tips.DM_UPLOAD, charName))
+                    .setDescription(I18nService.getMessage(event.getGuild.getId, MessageKeys.Screenshots.DM_FALLBACK, charName, "death message"))
+                    .setFooter(I18nService.getMessage(event.getGuild.getId, MessageKeys.Tips.SCREENSHOT_PASTE))
                     .build()
                   
                   event.reply("").addEmbeds(fallbackEmbed).setEphemeral(true).queue()
@@ -758,7 +756,7 @@ class BotListener extends ListenerAdapter with StrictLogging {
             
             val components = if (screenshots.length > 1) {
               val baseButtons = List(
-                Button.secondary(s"death_screenshot_${charName}_${deathTime}_${messageId}", "Add Screenshot"),
+                Button.secondary(s"death_screenshot_${charName}_${deathTime}_${messageId}", I18nService.getMessage(event.getGuild.getId, MessageKeys.UI.ADD_SCREENSHOT_BUTTON)),
                 Button.primary(s"prev_screenshot_${charName}_${deathTime}_${messageId}_${newIndex}", "◀"),
                 Button.secondary(s"screenshot_info_${charName}_${deathTime}_${messageId}", s"${newIndex + 1}/${screenshots.length}").asDisabled(),
                 Button.primary(s"next_screenshot_${charName}_${deathTime}_${messageId}_${newIndex}", "▶")
@@ -773,7 +771,7 @@ class BotListener extends ListenerAdapter with StrictLogging {
               }
               List(ActionRow.of(buttonsWithDelete: _*))
             } else {
-              val baseButtons = List(Button.secondary(s"death_screenshot_${charName}_${deathTime}_${messageId}", "Add Screenshot"))
+              val baseButtons = List(Button.secondary(s"death_screenshot_${charName}_${deathTime}_${messageId}", I18nService.getMessage(event.getGuild.getId, MessageKeys.UI.ADD_SCREENSHOT_BUTTON)))
               val memberCheck = guild.getMember(event.getUser)
               val userNameCheck = if (memberCheck != null && memberCheck.getNickname != null) memberCheck.getNickname else event.getUser.getName
               val isAdmin = memberCheck != null && memberCheck.hasPermission(net.dv8tion.jda.api.Permission.ADMINISTRATOR)
@@ -834,7 +832,7 @@ class BotListener extends ListenerAdapter with StrictLogging {
               
               val components = if (updatedScreenshots.length > 1) {
                 val baseButtons = List(
-                  Button.secondary(s"death_screenshot_${charName}_${deathTime}_${messageId}", "Add Screenshot"),
+                  Button.secondary(s"death_screenshot_${charName}_${deathTime}_${messageId}", I18nService.getMessage(event.getGuild.getId, MessageKeys.UI.ADD_SCREENSHOT_BUTTON)),
                   Button.primary(s"prev_screenshot_${charName}_${deathTime}_${messageId}_${newIndex}", "◀"),
                   Button.secondary(s"screenshot_info_${charName}_${deathTime}_${messageId}", s"${newIndex + 1}/${updatedScreenshots.length}").asDisabled(),
                   Button.primary(s"next_screenshot_${charName}_${deathTime}_${messageId}_${newIndex}", "▶")
@@ -849,7 +847,7 @@ class BotListener extends ListenerAdapter with StrictLogging {
                 }
                 List(ActionRow.of(buttonsWithDelete: _*))
               } else {
-                val baseButtons = List(Button.secondary(s"death_screenshot_${charName}_${deathTime}_${messageId}", "Add Screenshot"))
+                val baseButtons = List(Button.secondary(s"death_screenshot_${charName}_${deathTime}_${messageId}", I18nService.getMessage(event.getGuild.getId, MessageKeys.UI.ADD_SCREENSHOT_BUTTON)))
                 val memberCheck = guild.getMember(user)
                 val userNameCheck = if (memberCheck != null && memberCheck.getNickname != null) memberCheck.getNickname else user.getName
                 val isAdmin = memberCheck != null && memberCheck.hasPermission(net.dv8tion.jda.api.Permission.ADMINISTRATOR)
@@ -870,23 +868,23 @@ class BotListener extends ListenerAdapter with StrictLogging {
                 .setFooter(null)
                 .build()
               
-              val addButtonText = I18nService.getMessage(guild.getId, MessageKeys.Screenshots.BUTTON_ADD)
+              val addButtonText = I18nService.getMessage(event.getGuild.getId, MessageKeys.Screenshots.BUTTON_ADD)
               val addButton = List(ActionRow.of(Button.secondary(s"death_screenshot_${charName}_${deathTime}_${messageId}", addButtonText)))
               event.getHook.editOriginalEmbeds(updatedEmbed).setComponents(addButton: _*).queue()
             }
             } else {
               // Failed to delete - not the author or admin, or other error
-              val errorMessage = I18nService.getMessage(guild.getId, MessageKeys.Screenshots.DELETE_PERMISSION_ERROR)
+              val errorMessage = I18nService.getMessage(event.getGuild.getId, MessageKeys.Screenshots.DELETE_PERMISSION_ERROR)
               event.getHook.sendMessage(errorMessage).setEphemeral(true).queue()
             }
           } else {
-            val errorMessage = I18nService.getMessage(guild.getId, MessageKeys.Screenshots.NOT_FOUND)
+            val errorMessage = I18nService.getMessage(event.getGuild.getId, MessageKeys.Screenshots.NOT_FOUND)
             event.getHook.sendMessage(errorMessage).setEphemeral(true).queue()
           }
         }
         
         if (worldOpt.isEmpty) {
-          val errorMessage = I18nService.getMessage(guild.getId, MessageKeys.Errors.WORLD_NOT_CONFIGURED)
+          val errorMessage = I18nService.getMessage(event.getGuild.getId, MessageKeys.Errors.WORLD_NOT_CONFIGURED)
           event.getHook.sendMessage(errorMessage).setEphemeral(true).queue()
         }
       } else {
@@ -908,7 +906,7 @@ class BotListener extends ListenerAdapter with StrictLogging {
               responseText = s":gear: You have been added to the <@&${role.getId}> role."
             } catch {
               case _: Throwable =>
-                responseText = s"${Config.noEmoji} Failed to add you to the <@&${role.getId}> role."
+                responseText = s"${Config.noEmoji} ${I18nService.getMessage(event.getGuild.getId, MessageKeys.Errors.FAILED_TO_ADD_ROLE, s"<@&${role.getId}>")}"
                 val discordInfo = BotApp.discordRetrieveConfig(guild)
                 val adminChannelId = if (discordInfo.nonEmpty) discordInfo("admin_channel") else "0"
                 val adminTextChannel = guild.getTextChannelById(adminChannelId)
@@ -934,7 +932,7 @@ class BotListener extends ListenerAdapter with StrictLogging {
               responseText = s":gear: You have been removed from the <@&${role.getId}> role."
             } catch {
               case _: Throwable =>
-                responseText = s"${Config.noEmoji} Failed to remove you from the <@&${role.getId}> role."
+                responseText = s"${Config.noEmoji} ${I18nService.getMessage(event.getGuild.getId, MessageKeys.Errors.FAILED_TO_REMOVE_ROLE, s"<@&${role.getId}>")}"
                 val discordInfo = BotApp.discordRetrieveConfig(guild)
                 val adminChannelId = if (discordInfo.nonEmpty) discordInfo("admin_channel") else "0"
                 val adminTextChannel = guild.getTextChannelById(adminChannelId)
@@ -970,7 +968,7 @@ class BotListener extends ListenerAdapter with StrictLogging {
               responseText = s":gear: You have been added to the <@&${role.getId}> role."
             } catch {
               case _: Throwable =>
-                responseText = s"${Config.noEmoji} Failed to add you to the <@&${role.getId}> role."
+                responseText = s"${Config.noEmoji} ${I18nService.getMessage(event.getGuild.getId, MessageKeys.Errors.FAILED_TO_ADD_ROLE, s"<@&${role.getId}>")}"
                 val discordInfo = BotApp.discordRetrieveConfig(guild)
                 val adminChannelId = if (discordInfo.nonEmpty) discordInfo("admin_channel") else "0"
                 val adminTextChannel = guild.getTextChannelById(adminChannelId)
@@ -996,7 +994,7 @@ class BotListener extends ListenerAdapter with StrictLogging {
               responseText = s":gear: You have been removed from the <@&${role.getId}> role."
             } catch {
               case _: Throwable =>
-                responseText = s"${Config.noEmoji} Failed to remove you from the <@&${role.getId}> role."
+                responseText = s"${Config.noEmoji} ${I18nService.getMessage(event.getGuild.getId, MessageKeys.Errors.FAILED_TO_REMOVE_ROLE, s"<@&${role.getId}>")}"
                 val discordInfo = BotApp.discordRetrieveConfig(guild)
                 val adminChannelId = if (discordInfo.nonEmpty) discordInfo("admin_channel") else "0"
                 val adminTextChannel = guild.getTextChannelById(adminChannelId)
@@ -1045,12 +1043,12 @@ class BotListener extends ListenerAdapter with StrictLogging {
       //
       case Some(satchelTimeList) if satchelTimeList.isEmpty =>
         embed.setColor(178877)
-        if (tagOption.nonEmpty) embed.setFooter(s"Tag: ${tagOption.toLowerCase}")
-        embed.setDescription("This is a **[Galthen's Satchel](https://tibia.fandom.com/wiki/Galthen's_Satchel)** cooldown tracker.\nMark the <:satchel:1030348072577945651> as **Collected** and I will message you when the 30 day cooldown expires.")
+        if (tagOption.nonEmpty) embed.setFooter(s"${I18nService.getMessage(event.getGuild.getId, MessageKeys.UI.TAG_PREFIX)}${tagOption.toLowerCase}")
+        embed.setDescription(I18nService.getMessage(event.getGuild.getId, MessageKeys.Satchel.DESCRIPTION))
         embed.setThumbnail("https://tibia.fandom.com/wiki/Special:Redirect/file/Galthen's_Satchel.gif")
         event.getHook.sendMessageEmbeds(embed.build()).addActionRow(
-          Button.success("galthenSet", "Collected"),
-          Button.danger("galthenRemove", "Clear").asDisabled
+          Button.success("galthenSet", I18nService.getMessage(event.getGuild.getId, MessageKeys.Buttons.COLLECTED)),
+          Button.danger("galthenRemove", I18nService.getMessage(event.getGuild.getId, MessageKeys.Buttons.CLEAR)).asDisabled
         ).queue()
       //
       case Some(satchelTimeList) =>
@@ -1068,7 +1066,7 @@ class BotListener extends ListenerAdapter with StrictLogging {
         }
 
         if (tagOption.isEmpty && fullList.nonEmpty) {
-          embed.setTitle("Existing Cooldowns:")
+          embed.setTitle(I18nService.getMessage(event.getGuild.getId, MessageKeys.Embeds.EXISTING_COOLDOWNS))
           val descriptionTruncate = fullList.mkString("\n")
           if (descriptionTruncate.length > 4050) {
             val truncatedDescription = descriptionTruncate.substring(0, 4050)
@@ -1082,43 +1080,43 @@ class BotListener extends ListenerAdapter with StrictLogging {
           embed.setThumbnail("https://tibia.fandom.com/wiki/Special:Redirect/file/Galthen's_Satchel.gif")
           if (fullList.size == 1){
             event.getHook.sendMessageEmbeds(embed.build()).addActionRow(
-              Button.success("galthenSet", "Collected").asDisabled,
-              Button.danger("galthenRemoveAll", "Clear")
+              Button.success("galthenSet", I18nService.getMessage(event.getGuild.getId, MessageKeys.Buttons.COLLECTED)).asDisabled,
+              Button.danger("galthenRemoveAll", I18nService.getMessage(event.getGuild.getId, MessageKeys.Buttons.CLEAR))
             ).queue()
           } else {
             event.getHook.sendMessageEmbeds(embed.build()).addActionRow(
-              Button.secondary("galthenLock", "🔒"),
-              Button.danger("galthenRemoveAll", "Clear All").asDisabled
+              Button.secondary("galthenLock", I18nService.getMessage(event.getGuild.getId, MessageKeys.Buttons.LOCK)),
+              Button.danger("galthenRemoveAll", I18nService.getMessage(event.getGuild.getId, MessageKeys.Buttons.CLEAR_ALL)).asDisabled
             ).queue()
           }
         } else if (tagOption.nonEmpty && tagList.nonEmpty) { // tag picked up
-          embed.setFooter(s"Tag: ${tagOption.toLowerCase}")
+          embed.setFooter(s"${I18nService.getMessage(event.getGuild.getId, MessageKeys.UI.TAG_PREFIX)}${tagOption.toLowerCase}")
           embed.setDescription(tagList.mkString("\n"))
           embed.setColor(9855533)
           event.getHook.sendMessageEmbeds(embed.build()).addActionRow(
-            Button.success("galthenSet", "Collected").asDisabled,
-            Button.danger("galthenRemove", "Clear")
+            Button.success("galthenSet", I18nService.getMessage(event.getGuild.getId, MessageKeys.Buttons.COLLECTED)).asDisabled,
+            Button.danger("galthenRemove", I18nService.getMessage(event.getGuild.getId, MessageKeys.Buttons.CLEAR))
           ).queue()
           // Add any other modifications to the embed if needed
         } else {
           embed.setColor(178877)
-          if (tagOption.nonEmpty) embed.setFooter(s"Tag: ${tagOption.toLowerCase}")
-          embed.setDescription("This is a **[Galthen's Satchel](https://tibia.fandom.com/wiki/Galthen's_Satchel)** cooldown tracker.\nMark the <:satchel:1030348072577945651> as **Collected** and I will message you when the 30 day cooldown expires.")
+          if (tagOption.nonEmpty) embed.setFooter(s"${I18nService.getMessage(event.getGuild.getId, MessageKeys.UI.TAG_PREFIX)}${tagOption.toLowerCase}")
+          embed.setDescription(I18nService.getMessage(event.getGuild.getId, MessageKeys.Satchel.DESCRIPTION))
           embed.setThumbnail("https://tibia.fandom.com/wiki/Special:Redirect/file/Galthen's_Satchel.gif")
           event.getHook.sendMessageEmbeds(embed.build()).addActionRow(
-            Button.success("galthenSet", "Collected"),
-            Button.danger("galthenRemove", "Clear").asDisabled
+            Button.success("galthenSet", I18nService.getMessage(event.getGuild.getId, MessageKeys.Satchel.COLLECTED)),
+            Button.danger("galthenRemove", I18nService.getMessage(event.getGuild.getId, MessageKeys.Buttons.CLEAR)).asDisabled
           ).queue()
         }
       // /HERE
       case None =>
         embed.setColor(178877)
-        if (tagOption.nonEmpty) embed.setFooter(s"Tag: ${tagOption.toLowerCase}")
-        embed.setDescription("This is a **[Galthen's Satchel](https://tibia.fandom.com/wiki/Galthen's_Satchel)** cooldown tracker.\nMark the <:satchel:1030348072577945651> as **Collected** and I will message you when the 30 day cooldown expires.")
+        if (tagOption.nonEmpty) embed.setFooter(s"${I18nService.getMessage(event.getGuild.getId, MessageKeys.UI.TAG_PREFIX)}${tagOption.toLowerCase}")
+        embed.setDescription(I18nService.getMessage(event.getGuild.getId, MessageKeys.Satchel.DESCRIPTION))
         embed.setThumbnail("https://tibia.fandom.com/wiki/Special:Redirect/file/Galthen's_Satchel.gif")
         event.getHook.sendMessageEmbeds(embed.build()).addActionRow(
-          Button.success("galthenSet", "Collected"),
-          Button.danger("galthenRemove", "Clear").asDisabled
+          Button.success("galthenSet", I18nService.getMessage(event.getGuild.getId, MessageKeys.Buttons.COLLECTED)),
+          Button.danger("galthenRemove", I18nService.getMessage(event.getGuild.getId, MessageKeys.Buttons.CLEAR)).asDisabled
         ).queue()
       //
     }
@@ -1159,7 +1157,7 @@ class BotListener extends ListenerAdapter with StrictLogging {
             })
           }
         } else {
-          val embed = new EmbedBuilder().setDescription(s"${Config.noEmoji} You do not have permission to use this command.").build()
+          val embed = new EmbedBuilder().setDescription(s"${Config.noEmoji} ${I18nService.getMessage(event.getGuild.getId, MessageKeys.Commands.PERMISSION_DENIED)}").build()
           event.getHook.sendMessageEmbeds(embed).queue()
         }
       case "guild" =>
@@ -1180,7 +1178,7 @@ class BotListener extends ListenerAdapter with StrictLogging {
             })
           }
         } else {
-          val embed = new EmbedBuilder().setDescription(s"${Config.noEmoji} You do not have permission to use this command.").build()
+          val embed = new EmbedBuilder().setDescription(s"${Config.noEmoji} ${I18nService.getMessage(event.getGuild.getId, MessageKeys.Commands.PERMISSION_DENIED)}").build()
           event.getHook.sendMessageEmbeds(embed).queue()
         }
       case "list" =>
@@ -1198,7 +1196,7 @@ class BotListener extends ListenerAdapter with StrictLogging {
             })
           })
         } else {
-          val embed = new EmbedBuilder().setDescription(s"${Config.noEmoji} You do not have permission to use this command.").build()
+          val embed = new EmbedBuilder().setDescription(s"${Config.noEmoji} ${I18nService.getMessage(event.getGuild.getId, MessageKeys.Commands.PERMISSION_DENIED)}").build()
           event.getHook.sendMessageEmbeds(embed).queue()
         }
       case "clear" =>
@@ -1206,7 +1204,7 @@ class BotListener extends ListenerAdapter with StrictLogging {
           val embed = BotApp.clearHunted(event)
           event.getHook.sendMessageEmbeds(embed).queue()
         } else {
-          val embed = new EmbedBuilder().setDescription(s"${Config.noEmoji} You do not have permission to use this command.").build()
+          val embed = new EmbedBuilder().setDescription(s"${Config.noEmoji} ${I18nService.getMessage(event.getGuild.getId, MessageKeys.Commands.PERMISSION_DENIED)}").build()
           event.getHook.sendMessageEmbeds(embed).queue()
         }
       case "deaths" =>
@@ -1219,7 +1217,7 @@ class BotListener extends ListenerAdapter with StrictLogging {
             event.getHook.sendMessageEmbeds(embed).queue()
           }
         } else {
-           val embed = new EmbedBuilder().setDescription(s"${Config.noEmoji} You do not have permission to use this command.").build()
+           val embed = new EmbedBuilder().setDescription(s"${Config.noEmoji} ${I18nService.getMessage(event.getGuild.getId, MessageKeys.Commands.PERMISSION_DENIED)}").build()
            event.getHook.sendMessageEmbeds(embed).queue()
          }
       case "levels" =>
@@ -1232,7 +1230,7 @@ class BotListener extends ListenerAdapter with StrictLogging {
             event.getHook.sendMessageEmbeds(embed).queue()
           }
         } else {
-           val embed = new EmbedBuilder().setDescription(s"${Config.noEmoji} You do not have permission to use this command.").build()
+           val embed = new EmbedBuilder().setDescription(s"${Config.noEmoji} ${I18nService.getMessage(event.getGuild.getId, MessageKeys.Commands.PERMISSION_DENIED)}").build()
            event.getHook.sendMessageEmbeds(embed).queue()
          }
       case "info" =>
@@ -1243,11 +1241,11 @@ class BotListener extends ListenerAdapter with StrictLogging {
           val embed = BotApp.detectHunted(event)
           event.getHook.sendMessageEmbeds(embed).queue()
         } else {
-           val embed = new EmbedBuilder().setDescription(s"${Config.noEmoji} You do not have permission to use this command.").build()
+           val embed = new EmbedBuilder().setDescription(s"${Config.noEmoji} ${I18nService.getMessage(event.getGuild.getId, MessageKeys.Commands.PERMISSION_DENIED)}").build()
            event.getHook.sendMessageEmbeds(embed).queue()
         }
       case _ =>
-        val embed = new EmbedBuilder().setDescription(s"${Config.noEmoji} Invalid subcommand '$subCommand' for `/hunted`.").build()
+        val embed = new EmbedBuilder().setDescription(s"${Config.noEmoji} ${I18nService.getMessage(event.getGuild.getId, MessageKeys.Commands.INVALID_SUBCOMMAND, subCommand, "hunted")}").build()
         event.getHook.sendMessageEmbeds(embed).queue()
     }
   }
@@ -1287,7 +1285,7 @@ class BotListener extends ListenerAdapter with StrictLogging {
             })
           }
       } else {
-         val embed = new EmbedBuilder().setDescription(s"${Config.noEmoji} You do not have permission to use this command.").build()
+         val embed = new EmbedBuilder().setDescription(s"${Config.noEmoji} ${I18nService.getMessage(event.getGuild.getId, MessageKeys.Commands.PERMISSION_DENIED)}").build()
          event.getHook.sendMessageEmbeds(embed).queue()
       }
       case "guild" =>
@@ -1308,7 +1306,7 @@ class BotListener extends ListenerAdapter with StrictLogging {
             })
           }
         } else {
-           val embed = new EmbedBuilder().setDescription(s"${Config.noEmoji} You do not have permission to use this command.").build()
+           val embed = new EmbedBuilder().setDescription(s"${Config.noEmoji} ${I18nService.getMessage(event.getGuild.getId, MessageKeys.Commands.PERMISSION_DENIED)}").build()
            event.getHook.sendMessageEmbeds(embed).queue()
         }
       case "list" =>
@@ -1326,7 +1324,7 @@ class BotListener extends ListenerAdapter with StrictLogging {
             })
           })
         } else {
-           val embed = new EmbedBuilder().setDescription(s"${Config.noEmoji} You do not have permission to use this command.").build()
+           val embed = new EmbedBuilder().setDescription(s"${Config.noEmoji} ${I18nService.getMessage(event.getGuild.getId, MessageKeys.Commands.PERMISSION_DENIED)}").build()
            event.getHook.sendMessageEmbeds(embed).queue()
         }
       case "clear" =>
@@ -1334,7 +1332,7 @@ class BotListener extends ListenerAdapter with StrictLogging {
           val embed = BotApp.clearAllies(event)
           event.getHook.sendMessageEmbeds(embed).queue()
         } else {
-           val embed = new EmbedBuilder().setDescription(s"${Config.noEmoji} You do not have permission to use this command.").build()
+           val embed = new EmbedBuilder().setDescription(s"${Config.noEmoji} ${I18nService.getMessage(event.getGuild.getId, MessageKeys.Commands.PERMISSION_DENIED)}").build()
            event.getHook.sendMessageEmbeds(embed).queue()
         }
       case "deaths" =>
@@ -1347,7 +1345,7 @@ class BotListener extends ListenerAdapter with StrictLogging {
             event.getHook.sendMessageEmbeds(embed).queue()
           }
         } else {
-           val embed = new EmbedBuilder().setDescription(s"${Config.noEmoji} You do not have permission to use this command.").build()
+           val embed = new EmbedBuilder().setDescription(s"${Config.noEmoji} ${I18nService.getMessage(event.getGuild.getId, MessageKeys.Commands.PERMISSION_DENIED)}").build()
            event.getHook.sendMessageEmbeds(embed).queue()
         }
       case "levels" =>
@@ -1360,14 +1358,14 @@ class BotListener extends ListenerAdapter with StrictLogging {
             event.getHook.sendMessageEmbeds(embed).queue()
           }
         } else {
-           val embed = new EmbedBuilder().setDescription(s"${Config.noEmoji} You do not have permission to use this command.").build()
+           val embed = new EmbedBuilder().setDescription(s"${Config.noEmoji} ${I18nService.getMessage(event.getGuild.getId, MessageKeys.Commands.PERMISSION_DENIED)}").build()
            event.getHook.sendMessageEmbeds(embed).queue()
         }
       case "info" =>
         val embed = BotApp.infoAllies(event, "player", nameOption)
         event.getHook.sendMessageEmbeds(embed).queue()
       case _ =>
-        val embed = new EmbedBuilder().setDescription(s"${Config.noEmoji} Invalid subcommand '$subCommand' for `/allies`.").build()
+        val embed = new EmbedBuilder().setDescription(s"${Config.noEmoji} ${I18nService.getMessage(event.getGuild.getId, MessageKeys.Commands.INVALID_SUBCOMMAND, subCommand, "allies")}").build()
         event.getHook.sendMessageEmbeds(embed).queue()
     }
 
@@ -1390,7 +1388,7 @@ class BotListener extends ListenerAdapter with StrictLogging {
               val labelOption: String = options.getOrElse("label", "").replaceAll("[^a-zA-Z0-9\\s]", "").trim
               val emojiOption: String = options.getOrElse("emoji", "").trim
               if (labelOption == "" || emojiOption == ""){
-                val embed = new EmbedBuilder().setDescription(s"${Config.noEmoji} You must supply a **label** and **emoji** when tagging a guild or player.").setColor(3092790).build()
+                val embed = new EmbedBuilder().setDescription(s"${Config.noEmoji} ${I18nService.getMessage(event.getGuild.getId, MessageKeys.Errors.MUST_SUPPLY_LABEL_EMOJI)}").setColor(3092790).build()
                 event.getHook.sendMessageEmbeds(embed).queue()
               } else {
 
@@ -1403,7 +1401,7 @@ class BotListener extends ListenerAdapter with StrictLogging {
                     event.getHook.sendMessageEmbeds(embed).queue()
                   })
                 } else {
-                  val embed = new EmbedBuilder().setDescription(s"${Config.noEmoji} The provided emoji is invalid - use a standard discord emoji.\n:warning: Custom emojis are not supported.").setColor(3092790).build()
+                  val embed = new EmbedBuilder().setDescription(s"${Config.noEmoji} ${I18nService.getMessage(event.getGuild.getId, MessageKeys.Errors.INVALID_EMOJI)}\n${I18nService.getMessage(event.getGuild.getId, MessageKeys.Errors.CUSTOM_EMOJIS_NOT_SUPPORTED)}").setColor(3092790).build()
                   event.getHook.sendMessageEmbeds(embed).queue()
                 }
               }
@@ -1423,7 +1421,7 @@ class BotListener extends ListenerAdapter with StrictLogging {
               }
           }
         case _ =>
-          val embed = new EmbedBuilder().setDescription(s"${Config.noEmoji} Invalid subcommandGroup '$subcommandGroupName' for `/neutral`.").setColor(3092790).build()
+          val embed = new EmbedBuilder().setDescription(s"${Config.noEmoji} ${I18nService.getMessage(event.getGuild.getId, MessageKeys.Commands.INVALID_SUBCOMMAND_GROUP, subcommandGroupName, "neutral")}").setColor(3092790).build()
           event.getHook.sendMessageEmbeds(embed).queue()
       }
     } else {
@@ -1445,7 +1443,7 @@ class BotListener extends ListenerAdapter with StrictLogging {
             event.getHook.sendMessageEmbeds(embed).queue()
           }
         case _ =>
-          val embed = new EmbedBuilder().setDescription(s"${Config.noEmoji} Invalid subcommand '$subCommand' for `/neutral`.").setColor(3092790).build()
+          val embed = new EmbedBuilder().setDescription(s"${Config.noEmoji} ${I18nService.getMessage(event.getGuild.getId, MessageKeys.Commands.INVALID_SUBCOMMAND, subCommand, "neutral")}").setColor(3092790).build()
           event.getHook.sendMessageEmbeds(embed).queue()
       }
     }
@@ -1483,7 +1481,7 @@ class BotListener extends ListenerAdapter with StrictLogging {
         val embed = BotApp.minLevel(event, worldOption, levelOption, "deaths")
         event.getHook.sendMessageEmbeds(embed).queue()
       case _ =>
-        val embed = new EmbedBuilder().setDescription(s"${Config.noEmoji} Invalid subcommand '$subCommand' for `/filter`.").build()
+        val embed = new EmbedBuilder().setDescription(s"${Config.noEmoji} ${I18nService.getMessage(event.getGuild.getId, MessageKeys.Commands.INVALID_SUBCOMMAND, subCommand, "filter")}").build()
         event.getHook.sendMessageEmbeds(embed).queue()
     }
   }
@@ -1505,7 +1503,7 @@ class BotListener extends ListenerAdapter with StrictLogging {
       case "boosted" =>
         handleAdminBoosted(event)
       case _ =>
-        val embed = new EmbedBuilder().setDescription(s"${Config.noEmoji} Invalid subcommand '$subCommand' for `/admin`.").build()
+        val embed = new EmbedBuilder().setDescription(s"${Config.noEmoji} ${I18nService.getMessage(event.getGuild.getId, MessageKeys.Commands.INVALID_SUBCOMMAND, subCommand, "admin")}").build()
         event.getHook.sendMessageEmbeds(embed).queue()
     }
   }
@@ -1518,9 +1516,9 @@ class BotListener extends ListenerAdapter with StrictLogging {
       
       val nextScheduled = com.tibiabot.scheduler.DailyScheduler.getNextAnnouncementTime
       val embed = new EmbedBuilder()
-        .setDescription(s"${Config.yesEmoji} Manual daily announcement triggered for this guild!\n\n" +
-          s"📋 **Includes:** Boosted monsters, latest news, and announcements\n" +
-          s"📅 **Next scheduled:** <t:${nextScheduled.toEpochSecond}:F>")
+        .setDescription(s"${Config.yesEmoji} ${I18nService.getMessage(event.getGuild.getId, MessageKeys.AdminSuccess.MANUAL_ANNOUNCEMENT_TRIGGERED)}\n\n" +
+          s"${I18nService.getMessage(event.getGuild.getId, MessageKeys.AdminSuccess.ANNOUNCEMENT_INCLUDES)}\n" +
+          s"${I18nService.getMessage(event.getGuild.getId, MessageKeys.AdminSuccess.NEXT_SCHEDULED, s"<t:${nextScheduled.toEpochSecond}:F>")}")
         .setColor(0x00FF00)
         .build()
       
@@ -1530,7 +1528,7 @@ class BotListener extends ListenerAdapter with StrictLogging {
       case e: Exception =>
         logger.error(s"Error triggering manual boosted announcement for guild ${guild.getName}: ${e.getMessage}", e)
         val embed = new EmbedBuilder()
-          .setDescription(s"${Config.noEmoji} Failed to trigger manual boosted announcement: ${e.getMessage}")
+          .setDescription(s"${Config.noEmoji} ${I18nService.getMessage(event.getGuild.getId, MessageKeys.Errors.FAILED_TRIGGER_ANNOUNCEMENT, e.getMessage)}")
           .setColor(0xFF0000)
           .build()
         event.getHook.sendMessageEmbeds(embed).queue()
@@ -1545,7 +1543,7 @@ class BotListener extends ListenerAdapter with StrictLogging {
         val embed = BotApp.exivaList(event)
         event.getHook.sendMessageEmbeds(embed).queue()
       case _ =>
-        val embed = new EmbedBuilder().setDescription(s"${Config.noEmoji} Invalid subcommand '$subCommand' for `/exiva`.").build()
+        val embed = new EmbedBuilder().setDescription(s"${Config.noEmoji} ${I18nService.getMessage(event.getGuild.getId, MessageKeys.Commands.INVALID_SUBCOMMAND, subCommand, "exiva")}").build()
         event.getHook.sendMessageEmbeds(embed).queue()
     }
   }
@@ -1566,7 +1564,7 @@ class BotListener extends ListenerAdapter with StrictLogging {
           event.getHook.sendMessageEmbeds(embed).queue()
         }
       case _ =>
-        val embed = new EmbedBuilder().setDescription(s"${Config.noEmoji} Invalid subcommand '$subCommand' for `/online`.").build()
+        val embed = new EmbedBuilder().setDescription(s"${Config.noEmoji} ${I18nService.getMessage(event.getGuild.getId, MessageKeys.Commands.INVALID_SUBCOMMAND, subCommand, "online")}").build()
         event.getHook.sendMessageEmbeds(embed).queue()
     }
   }
@@ -1577,15 +1575,15 @@ class BotListener extends ListenerAdapter with StrictLogging {
     val toggleOption: String = options.getOrElse("option", "")
 
     if (toggleOption == "disable") { // "disabled"
-      val embed = BotApp.boosted(event.getUser.getId, "disable", "")
+      val embed = BotApp.boosted(event.getGuild().getId(), event.getUser.getId, "disable", "")
       event.getHook.sendMessageEmbeds(embed).queue()
     } else if (toggleOption == "list") {
-      val embed = BotApp.boosted(event.getUser.getId, "list", "")
+      val embed = BotApp.boosted(event.getGuild().getId(), event.getUser.getId, "list", "")
       val allCheck = BotApp.boostedList(event.getUser.getId)
       if (allCheck) {
         event.getHook.sendMessageEmbeds(embed).setActionRow(
-          Button.success("boosted add", "Add").asDisabled,
-          Button.danger("boosted remove", "Remove").asDisabled,
+          Button.success("boosted add", I18nService.getMessage(event.getGuild.getId, MessageKeys.Buttons.ADD)).asDisabled,
+          Button.danger("boosted remove", I18nService.getMessage(event.getGuild.getId, MessageKeys.Buttons.REMOVE)).asDisabled,
           Button.secondary("boosted toggle", " ").withEmoji(Emoji.fromFormatted(Config.torchOnEmoji))
         ).queue()
       } else {
@@ -1595,7 +1593,7 @@ class BotListener extends ListenerAdapter with StrictLogging {
         ).queue()
       }
     } else {
-      val embed = new EmbedBuilder().setDescription(s"${Config.noEmoji} Invalid option for `/boosted`.").setColor(3092790).build()
+      val embed = new EmbedBuilder().setDescription(s"${Config.noEmoji} ${I18nService.getMessage(event.getGuild.getId, MessageKeys.Errors.INVALID_OPTION, "boosted")}").setColor(3092790).build()
       event.getHook.sendMessageEmbeds(embed).queue()
     }
   }
@@ -1681,7 +1679,7 @@ class BotListener extends ListenerAdapter with StrictLogging {
                     
                     val buttons = if (screenshotCount > 1) {
                       val baseButtons = List(
-                        Button.secondary(s"death_screenshot_${pending.charName}_${pending.deathTime}_${pending.messageId}", "Add Screenshot"),
+                        Button.secondary(s"death_screenshot_${pending.charName}_${pending.deathTime}_${pending.messageId}", I18nService.getMessage(event.getGuild.getId, MessageKeys.UI.ADD_SCREENSHOT_BUTTON)),
                         Button.primary(s"prev_screenshot_${pending.charName}_${pending.deathTime}_${pending.messageId}_${latestIndex}", "◀"),
                         Button.secondary(s"screenshot_info_${pending.charName}_${pending.deathTime}_${pending.messageId}", s"${screenshotCount}/${screenshotCount}").asDisabled(),
                         Button.primary(s"next_screenshot_${pending.charName}_${pending.deathTime}_${pending.messageId}_${latestIndex}", "▶")
@@ -1695,7 +1693,7 @@ class BotListener extends ListenerAdapter with StrictLogging {
                         baseButtons
                       }
                     } else {
-                      val baseButtons = List(Button.secondary(s"death_screenshot_${pending.charName}_${pending.deathTime}_${pending.messageId}", "Add Screenshot"))
+                      val baseButtons = List(Button.secondary(s"death_screenshot_${pending.charName}_${pending.deathTime}_${pending.messageId}", I18nService.getMessage(event.getGuild.getId, MessageKeys.UI.ADD_SCREENSHOT_BUTTON)))
                       val memberCheck = guild.getMember(user)
                       val userNameCheck = if (memberCheck != null && memberCheck.getNickname != null) memberCheck.getNickname else user.getName
                       val isAdmin = memberCheck != null && memberCheck.hasPermission(net.dv8tion.jda.api.Permission.ADMINISTRATOR)
@@ -1786,7 +1784,7 @@ class BotListener extends ListenerAdapter with StrictLogging {
                     
                     val buttons = if (screenshotCount > 1) {
                       val baseButtons = List(
-                        Button.secondary(s"death_screenshot_${pending.charName}_${pending.deathTime}_${pending.messageId}", "Add Screenshot"),
+                        Button.secondary(s"death_screenshot_${pending.charName}_${pending.deathTime}_${pending.messageId}", I18nService.getMessage(event.getGuild.getId, MessageKeys.UI.ADD_SCREENSHOT_BUTTON)),
                         Button.primary(s"prev_screenshot_${pending.charName}_${pending.deathTime}_${pending.messageId}_${latestIndex}", "◀"),
                         Button.secondary(s"screenshot_info_${pending.charName}_${pending.deathTime}_${pending.messageId}", s"${screenshotCount}/${screenshotCount}").asDisabled(),
                         Button.primary(s"next_screenshot_${pending.charName}_${pending.deathTime}_${pending.messageId}_${latestIndex}", "▶")
@@ -1800,7 +1798,7 @@ class BotListener extends ListenerAdapter with StrictLogging {
                         baseButtons
                       }
                     } else {
-                      val baseButtons = List(Button.secondary(s"death_screenshot_${pending.charName}_${pending.deathTime}_${pending.messageId}", "Add Screenshot"))
+                      val baseButtons = List(Button.secondary(s"death_screenshot_${pending.charName}_${pending.deathTime}_${pending.messageId}", I18nService.getMessage(event.getGuild.getId, MessageKeys.UI.ADD_SCREENSHOT_BUTTON)))
                       val memberCheck = guild.getMember(user)
                       val userNameCheck = if (memberCheck != null && memberCheck.getNickname != null) memberCheck.getNickname else user.getName
                       val isAdmin = memberCheck != null && memberCheck.hasPermission(net.dv8tion.jda.api.Permission.ADMINISTRATOR)
@@ -1820,12 +1818,12 @@ class BotListener extends ListenerAdapter with StrictLogging {
             }
             
             // Send confirmation DM to user
-            event.getChannel.sendMessage(s"${Config.yesEmoji} Screenshot uploaded successfully for **${pending.charName}** in **${if (guild != null) guild.getName else "Unknown Guild"}**!").queue()
+            event.getChannel.sendMessage(s"${Config.yesEmoji} ${I18nService.getMessage(if (guild != null) guild.getId else "en", MessageKeys.Tips.SCREENSHOT_UPLOADED_SUCCESS, pending.charName, if (guild != null) guild.getName else "Unknown Guild")}").queue()
             
           } catch {
             case e: Exception =>
               logger.error(s"Failed to store screenshot from DM: ${e.getMessage}", e)
-              event.getChannel.sendMessage(s"${Config.noEmoji} Failed to upload screenshot. Please try again.").queue()
+              event.getChannel.sendMessage(s"${Config.noEmoji} ${I18nService.getMessage(event.getGuild.getId, MessageKeys.Errors.FAILED_UPLOAD_SCREENSHOT)}").queue()
           }
         }
       } else {
@@ -1837,22 +1835,22 @@ class BotListener extends ListenerAdapter with StrictLogging {
           userPendingScreenshots.keys.foreach(pendingScreenshots.remove)
           
           if (cancelledCount == 1) {
-            event.getChannel.sendMessage(s"Your pending upload has been cancelled.").queue()
+            event.getChannel.sendMessage(I18nService.getMessage(user.getId, MessageKeys.Tips.UPLOAD_CANCELLED)).queue()
           } else if (cancelledCount > 1) {
-            event.getChannel.sendMessage(s"${cancelledCount} pending uploads have been cancelled.").queue()
+            event.getChannel.sendMessage(I18nService.getMessage(user.getId, MessageKeys.Tips.UPLOADS_CANCELLED, cancelledCount)).queue()
           }
           
           logger.info(s"User ${user.getName} (${user.getId}) cancelled ${cancelledCount} pending uploads via DM")
         } else {
           // User sent a DM but no image attachment and not a cancel command
-          event.getChannel.sendMessage("Please upload an image file (PNG, JPG, GIF, WebP) or paste an image from your clipboard.\nType 'cancel' to cancel any pending upload requests.").queue()
+          event.getChannel.sendMessage(I18nService.getMessage(user.getId, MessageKeys.Tips.DM_UPLOAD_INSTRUCTIONS)).queue()
         }
       }
     } else {
       // No pending uploads, check if user is asking for help or trying to cancel
       val messageContent = event.getMessage.getContentRaw.toLowerCase.trim
       if (messageContent.contains("cancel")) {
-        event.getChannel.sendMessage("You don't have any pending uploads to cancel.").queue()
+        event.getChannel.sendMessage(I18nService.getMessage(user.getId, MessageKeys.Tips.NO_PENDING_UPLOADS)).queue()
       } else if (messageContent.contains("help")) {
         event.getChannel.sendMessage(
           "**Tibia Bot Help**\n\n" +
@@ -1861,7 +1859,7 @@ class BotListener extends ListenerAdapter with StrictLogging {
           "**Supported formats:** PNG, JPG, JPEG, GIF, WebP"
         ).queue()
       } else {
-        event.getChannel.sendMessage("Hi! I can help you upload screenshots for death/kill reports.\nType 'help' for more information or 'cancel' to cancel pending uploads.").queue()
+        event.getChannel.sendMessage(I18nService.getMessage(user.getId, MessageKeys.Tips.DM_HELP_MESSAGE)).queue()
       }
     }
   }

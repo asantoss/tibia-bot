@@ -5,6 +5,11 @@ import akka.stream.scaladsl.{Keep, Sink, Source}
 import com.tibiabot.tibiadata.TibiaDataClient
 import com.tibiabot.tibiadata.response.{CharacterResponse, GuildResponse, BoostedResponse, CreatureResponse, RaceResponse, Members, HighscoresResponse}
 import com.typesafe.scalalogging.StrictLogging
+
+// Add imports for i18n support
+import com.tibiabot.I18nService
+import com.tibiabot.MessageKeys
+
 import net.dv8tion.jda.api.entities.Activity
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel
 import net.dv8tion.jda.api.entities.{Guild, MessageEmbed}
@@ -158,19 +163,19 @@ object BotApp extends App with StrictLogging {
   val boostedBossesList: List[String] = Await.result(bossesFutures, 10.seconds)
 
   // create the command to set up the bot
-  private val setupCommand: SlashCommandData = Commands.slash("setup", "Setup a world to be tracked")
+  private val setupCommand: SlashCommandData = Commands.slash("setup", I18nService.getMessage("en", MessageKeys.Commands.SETUP_DESCRIPTION))
     .setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.MANAGE_SERVER))
     .addOptions(new OptionData(OptionType.STRING, "world", "The world you want to track")
     .setRequired(true))
 
   // remove world command
-  private val removeCommand: SlashCommandData = Commands.slash("remove", "Remove a world from being tracked")
+  private val removeCommand: SlashCommandData = Commands.slash("remove", I18nService.getMessage("en", MessageKeys.Commands.REMOVE_DESCRIPTION))
     .setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.MANAGE_SERVER))
     .addOptions(new OptionData(OptionType.STRING, "world", "The world you want to remove")
     .setRequired(true))
 
   // hunted command
-  private val huntedCommand: SlashCommandData = Commands.slash("hunted", "Manage the hunted list")
+  private val huntedCommand: SlashCommandData = Commands.slash("hunted", I18nService.getMessage("en", MessageKeys.Commands.HUNTED_DESCRIPTION))
     .addSubcommands(
       new SubcommandData("guild", "Manage guilds in the hunted list")
       .addOptions(
@@ -226,7 +231,7 @@ object BotApp extends App with StrictLogging {
       )
 
   // allies command
-  private val alliesCommand: SlashCommandData = Commands.slash("allies", "Manage the allies list")
+  private val alliesCommand: SlashCommandData = Commands.slash("allies", I18nService.getMessage("en", MessageKeys.Commands.ALLIES_DESCRIPTION))
     .addSubcommands(
       new SubcommandData("guild", "Manage guilds in the allies list")
       .addOptions(
@@ -272,7 +277,7 @@ object BotApp extends App with StrictLogging {
       )
 
   // neutrals command
-  private val neutralsCommand: SlashCommandData = Commands.slash("neutral", "Configuration options for neutrals")
+  private val neutralsCommand: SlashCommandData = Commands.slash("neutral", I18nService.getMessage("en", MessageKeys.Commands.NEUTRAL_DESCRIPTION))
     .setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.MANAGE_SERVER))
     .addSubcommands(
       new SubcommandData("levels", "Show or hide neutral levels")
@@ -296,7 +301,7 @@ object BotApp extends App with StrictLogging {
     )
 
   // fullbless command
-  private val fullblessCommand: SlashCommandData = Commands.slash("fullbless", "Modify the level at which enemy fullblesses poke")
+  private val fullblessCommand: SlashCommandData = Commands.slash("fullbless", I18nService.getMessage("en", MessageKeys.Commands.FULLBLESS_DESCRIPTION))
     .setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.MANAGE_SERVER))
     .addOptions(
       new OptionData(OptionType.STRING, "world", "The world you want to configure this setting for").setRequired(true),
@@ -306,13 +311,13 @@ object BotApp extends App with StrictLogging {
     )
 
   // leaderboards command
-  private val leaderboardsCommand: SlashCommandData = Commands.slash("leaderboards", "Modify the level at which enemy fullblesses poke")
+  private val leaderboardsCommand: SlashCommandData = Commands.slash("leaderboards", I18nService.getMessage("en", MessageKeys.Commands.LEADERBOARDS_DESCRIPTION))
     .addOptions(
       new OptionData(OptionType.STRING, "world", "The world you want to configure this setting for").setRequired(true)
     )
 
   // minimum levels/deaths command
-  private val filterCommand: SlashCommandData = Commands.slash("filter", "Set a minimum level for the levels or deaths channels")
+  private val filterCommand: SlashCommandData = Commands.slash("filter", I18nService.getMessage("en", MessageKeys.Commands.FILTER_DESCRIPTION))
     .setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.MANAGE_SERVER))
     .addSubcommands(
       new SubcommandData("levels", "Hide events in the levels channel if the character is below a certain level")
@@ -332,7 +337,7 @@ object BotApp extends App with StrictLogging {
     )
 
   // remove world command
-  private val adminCommand: SlashCommandData = Commands.slash("admin", "Commands only available to the bot creator")
+  private val adminCommand: SlashCommandData = Commands.slash("admin", I18nService.getMessage("en", MessageKeys.Commands.ADMIN_DESCRIPTION))
     .setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.MANAGE_SERVER))
     .addSubcommands(
       new SubcommandData("leave", "Force the bot to leave a specific discord")
@@ -349,7 +354,7 @@ object BotApp extends App with StrictLogging {
     )
 
   // exiva command
-  private val exivaCommand: SlashCommandData = Commands.slash("exiva", "Show or hide exiva lists on death posts")
+  private val exivaCommand: SlashCommandData = Commands.slash("exiva", I18nService.getMessage("en", MessageKeys.Commands.EXIVA_DESCRIPTION))
     .setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.MANAGE_SERVER))
     .addSubcommands(
       new SubcommandData("deaths", "Show or hide the exiva list in the deaths channel")
@@ -364,18 +369,18 @@ object BotApp extends App with StrictLogging {
     )
 
     // exiva command
-    private val helpCommand: SlashCommandData = Commands.slash("help", "Resend the welcome message & basic getting started information")
+    private val helpCommand: SlashCommandData = Commands.slash("help", I18nService.getMessage("en", MessageKeys.Commands.HELP_DESCRIPTION))
       .setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.MANAGE_SERVER))
 
   // recreate channel command
-  private val repairCommand: SlashCommandData = Commands.slash("repair", "Repair & recreate channels that have been deleted for a specific world")
+  private val repairCommand: SlashCommandData = Commands.slash("repair", I18nService.getMessage("en", MessageKeys.Commands.REPAIR_DESCRIPTION))
     .setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.MANAGE_SERVER))
       .addOptions(
         new OptionData(OptionType.STRING, "world", "What world are you trying to recreate channels for?").setRequired(true),
       )
 
   // set galthen satchel reminder
-  private val galthenCommand: SlashCommandData = Commands.slash("galthen", "Use this to set a galthen satchel cooldown timer")
+  private val galthenCommand: SlashCommandData = Commands.slash("galthen", I18nService.getMessage("en", MessageKeys.Commands.GALTHEN_DESCRIPTION))
     .addSubcommands(
       new SubcommandData("satchel", "Use this to set a galthen satchel cooldown timer")
       .addOptions(
@@ -384,7 +389,7 @@ object BotApp extends App with StrictLogging {
     )
 
   // online list config  command
-  private val onlineCombineCommand: SlashCommandData = Commands.slash("online", "Configure how the online list is displayed")
+  private val onlineCombineCommand: SlashCommandData = Commands.slash("online", I18nService.getMessage("en", MessageKeys.Commands.ONLINE_DESCRIPTION))
     .setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.MANAGE_SERVER))
     .addSubcommands(
       new SubcommandData("list", "Configure the online list")
@@ -399,7 +404,7 @@ object BotApp extends App with StrictLogging {
     )
 
   // online list config  command
-  private val boostedCommand: SlashCommandData = Commands.slash("boosted", "Turn off these notifications or filter them")
+  private val boostedCommand: SlashCommandData = Commands.slash("boosted", I18nService.getMessage("en", MessageKeys.Commands.BOOSTED_DESCRIPTION))
     .addOptions(
       new OptionData(OptionType.STRING, "option", "Would you like to add/remove a boss or creature?").setRequired(true)
         .addChoices(
@@ -424,7 +429,7 @@ object BotApp extends App with StrictLogging {
   startBot(None, None) // guild: Option[Guild], world: Option[String]
 
   // run the scheduler to clean cache and update dashboard every hour
-  actorSystem.scheduler.schedule(60.seconds, 2.minutes) {
+  actorSystem.scheduler.schedule(60.seconds, 30.seconds) {
     // set activity status
     // only do this every second cycle
     if (updateOnOdd) {
@@ -550,7 +555,7 @@ object BotApp extends App with StrictLogging {
                         }
                         boostedChannel.sendMessageEmbeds(embeds.asJava)
                           .setActionRow(
-                            Button.primary("boosted list", "Server Save Notifications").withEmoji(Emoji.fromFormatted(Config.letterEmoji))
+                            Button.primary("boosted list", I18nService.getMessage(guild.getId, MessageKeys.Daily.SERVER_SAVE_BUTTON)).withEmoji(Emoji.fromFormatted(Config.letterEmoji))
                           )
                           .queue((message: Message) => {
                             //updateBoostedMessage(guild.getId, message.getId)
@@ -3228,7 +3233,7 @@ object BotApp extends App with StrictLogging {
 
         val galthenEmbed = new EmbedBuilder()
         galthenEmbed.setColor(3092790)
-        galthenEmbed.setDescription("This is a **[Galthen's Satchel](https://tibia.fandom.com/wiki/Galthen's_Satchel)** cooldown tracker.\nManage your cooldowns here:")
+        galthenEmbed.setDescription(I18nService.getMessage(guild.getId, MessageKeys.Satchel.MANAGE_DESCRIPTION))
         galthenEmbed.setThumbnail("https://tibia.fandom.com/wiki/Special:Redirect/file/Galthen's_Satchel.gif")
         boostedChannel.sendMessageEmbeds(galthenEmbed.build()).addActionRow(
           Button.primary("galthen default", "Cooldowns").withEmoji(Emoji.fromFormatted(Config.satchelEmoji))
@@ -3311,7 +3316,7 @@ object BotApp extends App with StrictLogging {
 
           val galthenEmbed = new EmbedBuilder()
           galthenEmbed.setColor(3092790)
-          galthenEmbed.setDescription("This is a **[Galthen's Satchel](https://tibia.fandom.com/wiki/Galthen's_Satchel)** cooldown tracker.\nManage your cooldowns here:")
+          galthenEmbed.setDescription(I18nService.getMessage(guild.getId, MessageKeys.Satchel.MANAGE_DESCRIPTION))
           galthenEmbed.setThumbnail("https://tibia.fandom.com/wiki/Special:Redirect/file/Galthen's_Satchel.gif")
           boostedChannel.sendMessageEmbeds(galthenEmbed.build()).addActionRow(
             Button.primary("galthen default", "Cooldowns").withEmoji(Emoji.fromFormatted(Config.satchelEmoji))
@@ -3450,7 +3455,7 @@ object BotApp extends App with StrictLogging {
         val levelsTextChannel: TextChannel = guild.getTextChannelById(levelsId)
         if (levelsTextChannel != null) {
           val levelsEmbed = new EmbedBuilder()
-          levelsEmbed.setDescription(s":speech_balloon: This channel shows levels that have been gained on this world.\n\nYou can filter what appears in this channel using the **`/levels filter`** command.")
+          levelsEmbed.setDescription(s":speech_balloon: ${I18nService.getMessage(guild.getId, MessageKeys.Setup.CHANNEL_HELP_LEVELS)}")
           levelsEmbed.setThumbnail("https://tibia.fandom.com/wiki/Special:Redirect/file/Sign_(Library).gif")
           levelsEmbed.setColor(3092790)
           levelsTextChannel.sendMessageEmbeds(levelsEmbed.build()).queue()
@@ -3460,7 +3465,7 @@ object BotApp extends App with StrictLogging {
         val deathsTextChannel: TextChannel = guild.getTextChannelById(deathsId)
         if (deathsTextChannel != null) {
           val deathsEmbed = new EmbedBuilder()
-          deathsEmbed.setDescription(s":speech_balloon: This channel shows deaths that occur on this world.\n\nYou can filter what appears in this channel using the **`/deaths filter`** command.")
+          deathsEmbed.setDescription(s":speech_balloon: ${I18nService.getMessage(guild.getId, MessageKeys.Setup.CHANNEL_HELP_DEATHS)}")
           deathsEmbed.setThumbnail("https://tibia.fandom.com/wiki/Special:Redirect/file/Sign_(Library).gif")
           deathsEmbed.setColor(3092790)
           deathsTextChannel.sendMessageEmbeds(deathsEmbed.build()).queue()
@@ -3470,7 +3475,7 @@ object BotApp extends App with StrictLogging {
         val activityTextChannel: TextChannel = guild.getTextChannelById(activityId)
         if (activityTextChannel != null) {
           val activityEmbed = new EmbedBuilder()
-          activityEmbed.setDescription(s":speech_balloon: This channel shows change activity for *allied* or *enemy* players.\n\nIt will show events when a players **joins** or **leaves** one of these tracked guilds or **changes their name**.")
+          activityEmbed.setDescription(s":speech_balloon: ${I18nService.getMessage(guild.getId, MessageKeys.Setup.CHANNEL_HELP_ACTIVITY)}")
           activityEmbed.setThumbnail("https://tibia.fandom.com/wiki/Special:Redirect/file/Sign_(Library).gif")
           activityEmbed.setColor(3092790)
           activityTextChannel.sendMessageEmbeds(activityEmbed.build()).queue()
@@ -3509,7 +3514,7 @@ object BotApp extends App with StrictLogging {
     if (detectSetting != null) {
       if (detectSetting == settingOption) {
         // embed reply
-        embedBuild.setDescription(s"${Config.noEmoji} **Automatic enemy detection** is already set to **$settingOption** for the world **$worldFormal**.")
+        embedBuild.setDescription(s"${Config.noEmoji} ${I18nService.getMessage(guild.getId, MessageKeys.Setup.ALREADY_CONFIGURED, "Automatic enemy detection", settingOption, worldFormal)}")
         embedBuild.build()
       } else {
         // set the setting here
@@ -3537,11 +3542,11 @@ object BotApp extends App with StrictLogging {
           }
         }
 
-        embedBuild.setDescription(s":gear: **Automatic enemy detection** is now set to **$settingOption** for the world **$worldFormal**.")
+        embedBuild.setDescription(s":gear: ${I18nService.getMessage(guild.getId, MessageKeys.Setup.SETTING_UPDATED, "Automatic enemy detection", settingOption, worldFormal)}")
         embedBuild.build()
       }
     } else {
-      embedBuild.setDescription(s"${Config.noEmoji} You need to run `/setup` and add **$worldFormal** before you can configure this setting.")
+      embedBuild.setDescription(s"${Config.noEmoji} ${I18nService.getMessage(guild.getId, MessageKeys.Setup.NEED_SETUP, worldFormal)}")
       embedBuild.build()
     }
   }
@@ -3602,7 +3607,7 @@ object BotApp extends App with StrictLogging {
     if (selectedSetting.isDefined) {
       if (selectedSetting.get == settingType) {
         // embed reply
-        embedBuild.setDescription(s"${Config.noEmoji} The **$channelType** channel is already set to **$setting $playerType** for the world **$worldFormal**.")
+        embedBuild.setDescription(s"${Config.noEmoji} ${I18nService.getMessage(guild.getId, MessageKeys.Setup.ALREADY_CONFIGURED, s"The $channelType channel", s"$setting $playerType", worldFormal)}")
         embedBuild.build()
       } else {
         // set the setting here
@@ -3644,11 +3649,11 @@ object BotApp extends App with StrictLogging {
           }
         }
 
-        embedBuild.setDescription(s":gear: The **$channelType** channel is now set to **$setting $playerType** for the world **$worldFormal**.")
+        embedBuild.setDescription(s":gear: ${I18nService.getMessage(guild.getId, MessageKeys.Setup.SETTING_UPDATED, s"The $channelType channel", s"$setting $playerType", worldFormal)}")
         embedBuild.build()
       }
     } else {
-      embedBuild.setDescription(s"${Config.noEmoji} You need to run `/setup` and add **$worldFormal** before you can configure this setting.")
+      embedBuild.setDescription(s"${Config.noEmoji} ${I18nService.getMessage(guild.getId, MessageKeys.Setup.NEED_SETUP, worldFormal)}")
       embedBuild.build()
     }
   }
@@ -4914,7 +4919,7 @@ object BotApp extends App with StrictLogging {
 
           val galthenEmbed = new EmbedBuilder()
           galthenEmbed.setColor(3092790)
-          galthenEmbed.setDescription("This is a **[Galthen's Satchel](https://tibia.fandom.com/wiki/Galthen's_Satchel)** cooldown tracker.\nManage your cooldowns here:")
+          galthenEmbed.setDescription(I18nService.getMessage(guild.getId, MessageKeys.Satchel.MANAGE_DESCRIPTION))
           galthenEmbed.setThumbnail("https://tibia.fandom.com/wiki/Special:Redirect/file/Galthen's_Satchel.gif")
           boostedChannel.sendMessageEmbeds(galthenEmbed.build()).addActionRow(
             Button.primary("galthen default", "Cooldowns").withEmoji(Emoji.fromFormatted(Config.satchelEmoji))
@@ -5592,12 +5597,12 @@ object BotApp extends App with StrictLogging {
     existingNames.exists(bs => bs.user == userId && bs.boostedName.toLowerCase == "all")
   }
 
-  def boosted(userId: String, boostedOption: String, boostedName: String): MessageEmbed = {
+  def boosted(guildId: String, userId: String, boostedOption: String, boostedName: String): MessageEmbed = {
     val url = s"jdbc:postgresql://${Config.postgresHost}:5432/bot_cache"
     val username = "postgres"
     val password = Config.postgresPassword
     val conn = DriverManager.getConnection(url, username, password)
-    var embedMessage = s"${Config.noEmoji} This command failed to run, try again?"
+    var embedMessage = s"${Config.noEmoji} ${I18nService.getMessage(guildId, MessageKeys.Boosted.COMMAND_FAILED)}"
 
     val statement = conn.createStatement()
 
@@ -5660,7 +5665,7 @@ object BotApp extends App with StrictLogging {
               s"$emoji $nameWithLink"
             }
           }.mkString("\n")
-        embedMessage = if (listSetting) s"${Config.letterEmoji} You will be notified for **all** boosted **bosses** and **creatures** at *server save*." else s"${Config.letterEmoji} You will be messaged if any of the following **booses** or **creatures** are boosted:\n\n$groupedAndSorted"
+        embedMessage = if (listSetting) s"${Config.letterEmoji} ${I18nService.getMessage(guildId, MessageKeys.Boosted.NOTIFICATION_ALL)}" else s"${Config.letterEmoji} ${I18nService.getMessage(guildId, MessageKeys.Boosted.LIST_MESSAGE, groupedAndSorted)}"
         val combinedMessage = embedMessage
         if (combinedMessage.size >= 4096) {
           val substituteText = "\n\n*`...cannot display any more results`*"
@@ -5671,12 +5676,12 @@ object BotApp extends App with StrictLogging {
           embedMessage = combinedMessage
         }
       } else {
-        embedMessage = s"${Config.letterEmoji} Your notification list is *empty*."
+        embedMessage = s"${Config.letterEmoji} ${I18nService.getMessage(guildId, MessageKeys.Boosted.LIST_EMPTY)}"
       }
     } else if (boostedOption == "add"){
       if (sanitizedName != "") {
         if (existingNames.exists(_.boostedName.replaceAll("[^a-zA-Z'\\-\\s]", "").trim.toLowerCase == sanitizedName)) {
-          embedMessage = s"${Config.noEmoji} **$sanitizedName** already exists."
+          embedMessage = s"${Config.noEmoji} ${I18nService.getMessage(guildId, MessageKeys.Boosted.ALREADY_EXISTS, sanitizedName)}"
         } else {
           if (sanitizedName == "all") {
             val query =
@@ -5687,7 +5692,7 @@ object BotApp extends App with StrictLogging {
             preparedStatement.setString(3, "all")
             preparedStatement.executeUpdate()
             preparedStatement.close()
-            embedMessage = s"${Config.yesEmoji} you have enabled notifications for **all** bosses and creatures."
+            embedMessage = s"${Config.yesEmoji} ${I18nService.getMessage(guildId, MessageKeys.Boosted.NOTIFICATION_ALL_ENABLED)}"
           } else {
             // Check if sanitizedName exists in boostedBossesList
             val isBoostedBoss = boostedBossesList.exists(_.equalsIgnoreCase(sanitizedName))
@@ -5716,8 +5721,8 @@ object BotApp extends App with StrictLogging {
                     s"$emoji $nameWithLink"
                   }
                 }.mkString("\n")
-              val listMessage = if (groupedAndSorted.trim != "") s"${Config.letterEmoji} You will be messaged if any of the following **booses** or **creatures** are boosted:\n\n$groupedAndSorted" else s"${Config.letterEmoji} Your notification list is *empty*."
-              val commandMessage = s"${Config.noEmoji} **$sanitizedName** is not a valid `boss` or `creature`."
+              val listMessage = if (groupedAndSorted.trim != "") s"${Config.letterEmoji} ${I18nService.getMessage(guildId, MessageKeys.Boosted.LIST_MESSAGE, groupedAndSorted)}" else s"${Config.letterEmoji} ${I18nService.getMessage(guildId, MessageKeys.Boosted.LIST_EMPTY)}"
+              val commandMessage = s"${Config.noEmoji} ${I18nService.getMessage(guildId, MessageKeys.Boosted.INVALID_ITEM, sanitizedName)}"
               val combinedMessage = listMessage + s"\n\n$commandMessage"
               if (combinedMessage.size >= 4096) {
                 val substituteText = "\n\n*`...cannot display any more results`*"
@@ -5756,8 +5761,8 @@ object BotApp extends App with StrictLogging {
                     s"$emoji $nameWithLink"
                   }
                 }.mkString("\n")
-              val listMessage = if (groupedAndSorted.trim != "") s"${Config.letterEmoji} You will be messaged if any of the following **booses** or **creatures** are boosted:\n\n$groupedAndSorted" else s"${Config.letterEmoji} You will be notified for **all** boosted **bosses** and **creatures** at *server save*."
-              val commandMessage = s"${Config.yesEmoji} **$sanitizedName** was added."
+              val listMessage = if (groupedAndSorted.trim != "") s"${Config.letterEmoji} ${I18nService.getMessage(guildId, MessageKeys.Boosted.LIST_MESSAGE, groupedAndSorted)}" else s"${Config.letterEmoji} ${I18nService.getMessage(guildId, MessageKeys.Boosted.NOTIFICATION_ALL)}"
+              val commandMessage = s"${Config.yesEmoji} ${I18nService.getMessage(guildId, MessageKeys.Boosted.ITEM_ADDED, sanitizedName)}"
               //WIP
               val combinedMessage = listMessage + s"\n\n$commandMessage"
               if (combinedMessage.size >= 4096) {
@@ -5807,8 +5812,8 @@ object BotApp extends App with StrictLogging {
               s"$emoji $nameWithLink"
             }
           }.mkString("\n")
-        val listMessage = if (listSetting) s"${Config.letterEmoji} You will be notified for **all** boosted **bosses** and **creatures** at *server save*." else s"${Config.letterEmoji} You will be messaged if any of the following **booses** or **creatures** are boosted:\n\n$groupedAndSorted"
-        val commandMessage = s"${Config.noEmoji} **$sanitizedName** is not a valid `boss` or `creature`."
+        val listMessage = if (listSetting) s"${Config.letterEmoji} ${I18nService.getMessage(guildId, MessageKeys.Boosted.NOTIFICATION_ALL)}" else s"${Config.letterEmoji} ${I18nService.getMessage(guildId, MessageKeys.Boosted.LIST_MESSAGE, groupedAndSorted)}"
+        val commandMessage = s"${Config.noEmoji} ${I18nService.getMessage(guildId, MessageKeys.Boosted.INVALID_ITEM, sanitizedName)}"
         val combinedMessage = listMessage + s"\n\n$commandMessage"
         if (combinedMessage.size >= 4096) {
           val substituteText = "\n\n*`...cannot display any more results`*"
@@ -5848,7 +5853,7 @@ object BotApp extends App with StrictLogging {
         preparedStatement.executeUpdate()
         preparedStatement.close()
 
-        embedMessage = s"${Config.yesEmoji} you have disabled notifications for **all** bosses and creatures."
+        embedMessage = s"${Config.yesEmoji} ${I18nService.getMessage(guildId, MessageKeys.Boosted.NOTIFICATION_ALL_DISABLED)}"
       } else if (existingNames.exists(_.boostedName.replaceAll("[^a-zA-Z'\\-\\s]", "").trim.toLowerCase == sanitizedName)) {
         var query = "DELETE FROM boosted_notifications WHERE userid = ? AND LOWER(name) = LOWER(?)"
         val preparedStatement = conn.prepareStatement(query)
@@ -5857,8 +5862,8 @@ object BotApp extends App with StrictLogging {
         preparedStatement.executeUpdate()
         preparedStatement.close()
 
-        val listMessage = if (filteredGroupedAndSorted.trim != "") s"${Config.letterEmoji} You will be messaged if any of the following **booses** or **creatures** are boosted:\n\n$filteredGroupedAndSorted" else s"${Config.letterEmoji} Your notification list is *empty*."
-        val commandMessage = s"${Config.yesEmoji} you removed **$sanitizedName** from the list."
+        val listMessage = if (filteredGroupedAndSorted.trim != "") s"${Config.letterEmoji} ${I18nService.getMessage(guildId, MessageKeys.Boosted.LIST_MESSAGE, filteredGroupedAndSorted)}" else s"${Config.letterEmoji} ${I18nService.getMessage(guildId, MessageKeys.Boosted.LIST_EMPTY)}"
+        val commandMessage = s"${Config.yesEmoji} ${I18nService.getMessage(guildId, MessageKeys.Boosted.ITEM_REMOVED, sanitizedName)}"
         val combinedMessage = listMessage + s"\n\n$commandMessage"
         if (combinedMessage.size >= 4096) {
           val substituteText = "\n\n*`...cannot display any more results`*"
@@ -5871,8 +5876,8 @@ object BotApp extends App with StrictLogging {
 
       } else {
 
-        val listMessage = if (filteredGroupedAndSorted.trim != "") s"${Config.letterEmoji} You will be messaged if any of the following **booses** or **creatures** are boosted:\n\n$filteredGroupedAndSorted" else s"${Config.letterEmoji} Your notification list is *empty*."
-        val commandMessage = s"${Config.noEmoji} **$sanitizedName** is not on your list."
+        val listMessage = if (filteredGroupedAndSorted.trim != "") s"${Config.letterEmoji} ${I18nService.getMessage(guildId, MessageKeys.Boosted.LIST_MESSAGE, filteredGroupedAndSorted)}" else s"${Config.letterEmoji} ${I18nService.getMessage(guildId, MessageKeys.Boosted.LIST_EMPTY)}"
+        val commandMessage = s"${Config.noEmoji} ${I18nService.getMessage(guildId, MessageKeys.Boosted.NOT_ON_LIST, sanitizedName)}"
         val combinedMessage = listMessage + s"\n\n$commandMessage"
         if (combinedMessage.size >= 4096) {
           val substituteText = "\n\n*`...cannot display any more results`*"
@@ -5893,7 +5898,7 @@ object BotApp extends App with StrictLogging {
         preparedStatement.executeUpdate()
         preparedStatement.close()
         // WIP Message
-        embedMessage = s"${Config.letterEmoji} Your notification list is *empty*."
+        embedMessage = s"${Config.letterEmoji} ${I18nService.getMessage(guildId, MessageKeys.Boosted.LIST_EMPTY)}"
       } else {
         val query = "INSERT INTO boosted_notifications (userid, name, type) VALUES (?, ?, ?) ON CONFLICT (userid, name) DO NOTHING"
         val preparedStatement = conn.prepareStatement(query)
@@ -5902,7 +5907,7 @@ object BotApp extends App with StrictLogging {
         preparedStatement.setString(3, "all")
         preparedStatement.executeUpdate()
         preparedStatement.close()
-        embedMessage = s"${Config.letterEmoji} You will be notified for **all** boosted **bosses** and **creatures** at *server save*."
+        embedMessage = s"${Config.letterEmoji} ${I18nService.getMessage(guildId, MessageKeys.Boosted.NOTIFICATION_ALL)}"
       }
       //
     } else if (boostedOption == "disable") {
@@ -5912,7 +5917,7 @@ object BotApp extends App with StrictLogging {
       preparedStatement.executeUpdate()
       preparedStatement.close()
 
-      embedMessage = s"${Config.yesEmoji} you have **disabled** notifications for **all** bosses and creatures."
+      embedMessage = s"${Config.yesEmoji} ${I18nService.getMessage(guildId, MessageKeys.Boosted.NOTIFICATION_ALL_DISABLED)}"
     }
 
     conn.close()

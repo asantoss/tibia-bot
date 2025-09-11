@@ -1,6 +1,6 @@
 package com.tibiabot.scheduler
 
-import com.tibiabot.{BotApp, Config, EmojiManager}
+import com.tibiabot.{BotApp, Config, EmojiManager, I18nService, MessageKeys}
 import com.tibiabot.tibiadata.TibiaDataClient
 import com.typesafe.scalalogging.StrictLogging
 import net.dv8tion.jda.api.{EmbedBuilder, JDA}
@@ -151,7 +151,7 @@ object DailyScheduler extends StrictLogging {
   ): MessageEmbed = {
     
     val embed = new EmbedBuilder()
-    embed.setTitle("📰 Daily Tibia Update")
+    embed.setTitle(I18nService.getMessage(guildId, MessageKeys.Daily.TITLE))
     embed.setColor(0x1E90FF) // Dodger blue
     embed.setTimestamp(java.time.Instant.now())
     
@@ -166,23 +166,24 @@ object DailyScheduler extends StrictLogging {
         val bossImageUrl = boostedBoss.image_url
         
         embed.addField(
-          s"${boostedBossEmoji} **Boosted Boss**",
-          s"### [${bossName}](${BotApp.creatureWikiUrl(bossName)})\n" +
-          s"📍 **Location:** Check the [Boostable Bosses](https://www.tibia.com/library/?subtopic=boostablebosses) page\n" +
-          s"⭐ **Bonus:** Double XP and loot chance\n" +
-          s"🎯 **Tip:** Great for boss hunting today!",
+          s"${boostedBossEmoji} ${I18nService.getMessage(guildId, MessageKeys.Daily.BOOSTED_BOSS)}",
+          s"**[${bossName}](${BotApp.creatureWikiUrl(bossName)})**\n" +
+          s"${I18nService.getMessage(guildId, MessageKeys.Daily.LOCATION_LABEL)} ${I18nService.getMessage(guildId, MessageKeys.Daily.BOOSTABLE_BOSSES_LINK)}\n" +
+          s"${I18nService.getMessage(guildId, MessageKeys.Daily.BONUS_LABEL)} ${I18nService.getMessage(guildId, MessageKeys.Daily.BOSS_BONUS)}\n" +
+          s"${I18nService.getMessage(guildId, MessageKeys.Daily.TIP_LABEL)} ${I18nService.getMessage(guildId, MessageKeys.Daily.BOSS_HUNTING_PERFECT)}",
           true
         )
         
-        // Set thumbnail to boss image if available
+        // Set thumbnail to boss image if available - prefer GIF over static
         if (bossImageUrl.nonEmpty) {
-          embed.setThumbnail(bossImageUrl)
+          val gifUrl = bossImageUrl.replace(".png", ".gif")
+          embed.setThumbnail(gifUrl)
         }
         
       case Left(error) =>
         embed.addField(
-          s"${boostedBossEmoji} **Boosted Boss**",
-          "❌ Failed to load boosted boss information",
+          s"${boostedBossEmoji} ${I18nService.getMessage(guildId, MessageKeys.Daily.BOOSTED_BOSS)}",
+          I18nService.getMessage(guildId, MessageKeys.Daily.FAILED_LOAD_BOSS),
           true
         )
         logger.warn(s"Failed to fetch boosted boss: $error")
@@ -196,23 +197,24 @@ object DailyScheduler extends StrictLogging {
         val creatureImageUrl = creatureResponse.creatures.boosted.image_url
         
         embed.addField(
-          s"${boostedCreatureEmoji} **Boosted Creature**",
-          s"### [${creatureName}](${BotApp.creatureWikiUrl(creatureName)})\n" +
-          s"📍 **Location:** Check the [Creatures](https://www.tibia.com/library/?subtopic=creatures) library\n" +
-          s"⭐ **Bonus:** Double XP and improved loot\n" +
-          s"🏹 **Tip:** Perfect for hunting and task completion!",
+          s"${boostedCreatureEmoji} ${I18nService.getMessage(guildId, MessageKeys.Daily.BOOSTED_CREATURE)}",
+          s"**[${creatureName}](${BotApp.creatureWikiUrl(creatureName)})**\n" +
+          s"${I18nService.getMessage(guildId, MessageKeys.Daily.LOCATION_LABEL)} ${I18nService.getMessage(guildId, MessageKeys.Daily.CREATURES_LIBRARY_LINK)}\n" +
+          s"${I18nService.getMessage(guildId, MessageKeys.Daily.BONUS_LABEL)} ${I18nService.getMessage(guildId, MessageKeys.Daily.CREATURE_BONUS)}\n" +
+          s"${I18nService.getMessage(guildId, MessageKeys.Daily.TIP_LABEL)} ${I18nService.getMessage(guildId, MessageKeys.Daily.CREATURE_HUNTING_PERFECT)}",
           true
         )
         
-        // Set image to creature if no boss image
+        // Set image to creature if no boss image - prefer GIF over static
         if (embed.build().getThumbnail == null && creatureImageUrl.nonEmpty) {
-          embed.setThumbnail(creatureImageUrl)
+          val gifUrl = creatureImageUrl.replace(".png", ".gif")
+          embed.setThumbnail(gifUrl)
         }
         
       case Left(error) =>
         embed.addField(
-          s"${boostedCreatureEmoji} **Boosted Creature**",
-          "❌ Failed to load boosted creature information",
+          s"${boostedCreatureEmoji} ${I18nService.getMessage(guildId, MessageKeys.Daily.BOOSTED_CREATURE)}",
+          I18nService.getMessage(guildId, MessageKeys.Daily.FAILED_LOAD_CREATURE),
           true
         )
         logger.warn(s"Failed to fetch boosted creature: $error")
@@ -221,66 +223,92 @@ object DailyScheduler extends StrictLogging {
     // Add Latest News section
     newsResult match {
       case Right(newsResponse) =>
-        val latestNews = newsResponse.news.news.take(3) // Show only latest 3 news items
-        if (latestNews.nonEmpty) {
-          val newsText = latestNews.map { newsItem =>
-            val truncatedTitle = if (newsItem.title.length > 80) {
-              newsItem.title.take(77) + "..."
-            } else {
-              newsItem.title
-            }
-            s"• [${truncatedTitle}](${newsItem.url})"
-          }.mkString("\n")
-          
-          embed.addField(
-            "📰 **Latest News**",
-            newsText,
-            false
-          )
+        try {
+          val latestNews = newsResponse.news.news.take(3) // Show only latest 3 news items
+          if (latestNews.nonEmpty) {
+            val newsText = latestNews.map { newsItem =>
+              val truncatedTitle = if (newsItem.title.length > 80) {
+                newsItem.title.take(77) + "..."
+              } else {
+                newsItem.title
+              }
+              s"• [${truncatedTitle}](${newsItem.url})"
+            }.mkString("\n")
+            
+            embed.addField(
+              I18nService.getMessage(guildId, MessageKeys.Daily.NEWS_HEADER),
+              newsText,
+              false
+            )
+          } else {
+            // No news items available
+            embed.addField(
+              I18nService.getMessage(guildId, MessageKeys.Daily.NEWS_HEADER),
+              I18nService.getMessage(guildId, MessageKeys.Daily.NO_NEWS_AVAILABLE),
+              false
+            )
+          }
+        } catch {
+          case e: Exception =>
+            logger.warn(s"Error processing news data: ${e.getMessage}")
+            embed.addField(I18nService.getMessage(guildId, MessageKeys.Daily.NEWS_HEADER), I18nService.getMessage(guildId, MessageKeys.Daily.FAILED_LOAD_NEWS), false)
         }
       case Left(error) =>
         logger.warn(s"Failed to fetch latest news: $error")
-        embed.addField("📰 **Latest News**", "❌ Failed to load news", false)
+        embed.addField(I18nService.getMessage(guildId, MessageKeys.Daily.NEWS_HEADER), I18nService.getMessage(guildId, MessageKeys.Daily.FAILED_LOAD_NEWS), false)
     }
     
     // Add News Ticker section
     tickerResult match {
       case Right(tickerResponse) =>
-        val recentTickers = tickerResponse.newstickers.newstickers.take(2) // Show only 2 most recent
-        if (recentTickers.nonEmpty) {
-          val tickerText = recentTickers.map { ticker =>
-            val truncatedMessage = if (ticker.message.length > 100) {
-              ticker.message.take(97) + "..."
-            } else {
-              ticker.message
-            }
-            s"📢 ${truncatedMessage}"
-          }.mkString("\n")
-          
-          embed.addField(
-            "🔔 **Recent Announcements**",
-            tickerText,
-            false
-          )
+        try {
+          val recentTickers = tickerResponse.newstickers.newstickers.take(2) // Show only 2 most recent
+          if (recentTickers.nonEmpty) {
+            val tickerText = recentTickers.map { ticker =>
+              val truncatedMessage = if (ticker.message.length > 100) {
+                ticker.message.take(97) + "..."
+              } else {
+                ticker.message
+              }
+              s"📢 ${truncatedMessage}"
+            }.mkString("\n")
+            
+            embed.addField(
+              I18nService.getMessage(guildId, MessageKeys.Daily.TICKER_HEADER),
+              tickerText,
+              false
+            )
+          } else {
+            // No ticker items available
+            embed.addField(
+              I18nService.getMessage(guildId, MessageKeys.Daily.TICKER_HEADER),
+              I18nService.getMessage(guildId, MessageKeys.Daily.NO_ANNOUNCEMENTS_AVAILABLE),
+              false
+            )
+          }
+        } catch {
+          case e: Exception =>
+            logger.warn(s"Error processing ticker data: ${e.getMessage}")
+            embed.addField(I18nService.getMessage(guildId, MessageKeys.Daily.TICKER_HEADER), I18nService.getMessage(guildId, MessageKeys.Daily.FAILED_LOAD_ANNOUNCEMENTS), false)
         }
       case Left(error) =>
         logger.warn(s"Failed to fetch news ticker: $error")
-        embed.addField("🔔 **Recent Announcements**", "❌ Failed to load announcements", false)
+        embed.addField(I18nService.getMessage(guildId, MessageKeys.Daily.TICKER_HEADER), I18nService.getMessage(guildId, MessageKeys.Daily.FAILED_LOAD_ANNOUNCEMENTS), false)
     }
     
     // Add footer with helpful information
     embed.setFooter(
-      "🔄 Boosted monsters reset daily at server save (10:00 CET/CEST)",
+      I18nService.getMessage(guildId, MessageKeys.Daily.FOOTER_RESET_INFO),
       "https://tibia.fandom.com/wiki/Special:Redirect/file/Tibia_logo.png"
     )
     
     // Add description with general info
     embed.setDescription(
-      "Your daily Tibia update is here! 🎮\n\n" +
-      "**🌟 Boosted Monsters** - Double XP and improved loot rates!\n" +
-      "**📰 Latest News** - Stay informed about game updates\n" +
-      "**🔔 Announcements** - Important server information\n\n" +
-      "💡 **Tip:** Boosted bonuses apply to all characters - perfect for hunting and boss challenges!"
+      s"${I18nService.getMessage(guildId, MessageKeys.Daily.UPDATE_DESCRIPTION)}" +
+      s"${I18nService.getMessage(guildId, MessageKeys.Daily.BOOSTED_MONSTERS_INFO)}" +
+      s"${I18nService.getMessage(guildId, MessageKeys.Daily.LATEST_NEWS_INFO)}" +
+      s"${I18nService.getMessage(guildId, MessageKeys.Daily.NEWS_TICKER_INFO)}\n\n" +
+      s"${I18nService.getMessage(guildId, MessageKeys.Daily.TIP_BOOSTED_BONUSES)}"
     )
     
     embed.build()
