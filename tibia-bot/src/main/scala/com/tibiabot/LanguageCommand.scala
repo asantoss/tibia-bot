@@ -43,9 +43,12 @@ object LanguageCommand extends StrictLogging {
     val member = event.getMember
     if (member == null || !member.hasPermission(Permission.ADMINISTRATOR)) {
       val errorMessage = I18nService.getMessage(guild.getId, MessageKeys.Commands.PERMISSION_DENIED)
-      event.getHook.sendMessage(errorMessage).setEphemeral(true).queue()
+      event.reply(errorMessage).setEphemeral(true).queue()
       return
     }
+    
+    // Defer reply to avoid interaction timeout
+    event.deferReply().queue()
     
     val setOption = event.getOption("set")
     val showOption = event.getOption("show")
