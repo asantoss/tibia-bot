@@ -568,7 +568,7 @@ class TibiaBot(world: String)(implicit ex: ExecutionContextExecutor, mat: Materi
                   }
                   val worldData = worldsData.getOrElse(guildId, List()).filter(w => w.name.toLowerCase() == world.toLowerCase())
                   val levelsChannel = worldData.headOption.map(_.levelsChannel).getOrElse("0")
-                  val levelMessage = I18nService.getMessage(guildId, MessageKeys.Online.ADVANCED_TO_LEVEL, s"[$charName](${charUrl(charName)})", onlinePlayer.level)
+                  val levelMessage = I18nService.getMessage(guildId, MessageKeys.Online.ADVANCED_TO_LEVEL, s"[$charName](${charUrl(charName)})", onlinePlayer.level.toString)
                   val webhookMessage = s"${vocEmoji(onlinePlayer.vocation)} $levelMessage $guildIcon"
                   val levelsTextChannel = guild.getTextChannelById(levelsChannel)
                   if (levelsTextChannel != null) {
@@ -953,7 +953,7 @@ class TibiaBot(world: String)(implicit ex: ExecutionContextExecutor, mat: Materi
               val epochSecond = ZonedDateTime.parse(charDeath.death.time).toEpochSecond
 
               // this is the actual embed description
-              val atLevelText = I18nService.getMessage(guildId, MessageKeys.Deaths.AT_LEVEL, charDeath.death.level.toInt)
+              val atLevelText = I18nService.getMessage(guildId, MessageKeys.Deaths.AT_LEVEL, charDeath.death.level.toInt.toString)
               val killedByPrefix = I18nService.getMessage(guildId, MessageKeys.Deaths.KILLED_BY, "").split(":").head.trim // Get "Asesinado por" or "Killed by" part
               var embedText = s"$guildText$context <t:$epochSecond:R> $atLevelText\n$killedByPrefix $killerText.$exivaList"
 
