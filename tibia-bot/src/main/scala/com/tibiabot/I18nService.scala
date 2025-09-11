@@ -67,8 +67,13 @@ object I18nService extends StrictLogging {
    * Get translated message for a guild
    */
   def getMessage(guildId: String, key: String, args: Any*): String = {
-    val language = getGuildLanguage(guildId)
-    getMessage(language, key, args: _*)
+    // Check if guildId is actually a language code (for command registration)
+    parseLanguage(guildId) match {
+      case Some(language) => getMessage(language, key, args: _*)
+      case None => 
+        val language = getGuildLanguage(guildId)
+        getMessage(language, key, args: _*)
+    }
   }
   
   /**
