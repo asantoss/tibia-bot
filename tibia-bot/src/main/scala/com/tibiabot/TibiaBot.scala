@@ -699,7 +699,7 @@ class TibiaBot(world: String)(implicit ex: ExecutionContextExecutor, mat: Materi
               var notablePoke = ""
               val charName = charDeath.char.character.character.name
               val killer = charDeath.death.killers.last.name
-              val context = I18nService.getMessage(guildId, MessageKeys.Deaths.DIED)
+              var context = I18nService.getMessage(guildId, MessageKeys.Deaths.DIED)
               var embedColor = 3092790 // background default
               var embedThumbnail = creatureImageUrl(killer)
               var vowelCheck = "" // this is for adding "an" or "a" in front of creature names
@@ -773,7 +773,7 @@ class TibiaBot(world: String)(implicit ex: ExecutionContextExecutor, mat: Materi
                 killerList.foreach { k =>
                   if (k.player) {
                     if (k.name != charName) { // ignore 'self' entries on deathlist
-                      context = "Killed"
+                      context = I18nService.getMessage(guildId, MessageKeys.Deaths.KILLED)
                       notablePoke = "" // reset poke as its not a fullbless
                       if (embedColor == 3092790 || embedColor == 4540237) {
                         embedColor = 14869218 // bone white

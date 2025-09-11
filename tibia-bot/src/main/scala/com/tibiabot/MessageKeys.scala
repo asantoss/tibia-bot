@@ -65,6 +65,7 @@ object MessageKeys {
   object Deaths {
     val DEATH_DETECTED = "deaths.death_detected"
     val DIED = "deaths.died"
+    val KILLED = "deaths.killed"
     val LEVEL_LOSS = "deaths.level_loss"
     val NO_LEVEL_LOSS = "deaths.no_level_loss"
     val KILLED_BY = "deaths.killed_by"
