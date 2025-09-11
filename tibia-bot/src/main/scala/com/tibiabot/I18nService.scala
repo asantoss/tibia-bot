@@ -142,14 +142,14 @@ object I18nService extends StrictLogging {
       if (seconds <= 5) {
         getMessage(guildId, MessageKeys.Time.JUST_NOW)
       } else {
-        getMessage(guildId, MessageKeys.Time.SECONDS_AGO, seconds)
+        getMessage(guildId, MessageKeys.Time.SECONDS_AGO, seconds.toInt)
       }
     } else if (minutes < 60) {
-      getMessage(guildId, MessageKeys.Time.MINUTES_AGO, minutes)
+      getMessage(guildId, MessageKeys.Time.MINUTES_AGO, minutes.toInt)
     } else if (hours < 24) {
-      getMessage(guildId, MessageKeys.Time.HOURS_AGO, hours)
+      getMessage(guildId, MessageKeys.Time.HOURS_AGO, hours.toInt)
     } else {
-      getMessage(guildId, MessageKeys.Time.DAYS_AGO, days)
+      getMessage(guildId, MessageKeys.Time.DAYS_AGO, days.toInt)
     }
   }
 
