@@ -86,7 +86,7 @@ object I18nService extends StrictLogging {
       
       // Handle string formatting with arguments
       if (args.nonEmpty) {
-        String.format(message, args.map(_.toString): _*)
+        String.format(message, args: _*)
       } else {
         message
       }
