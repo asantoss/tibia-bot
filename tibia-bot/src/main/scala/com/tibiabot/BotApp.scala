@@ -6143,7 +6143,7 @@ object BotApp extends App with StrictLogging {
    */
   def updateChannelNames(guildId: String): Unit = {
     Try {
-      val guild = Config.jda.getGuildById(guildId)
+      val guild = jda.getGuildById(guildId)
       if (guild != null) {
         val channelMappings = Map(
           "command-log" -> MessageKeys.Channels.COMMAND_LOG,
