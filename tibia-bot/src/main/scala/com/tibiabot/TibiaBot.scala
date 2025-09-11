@@ -1012,7 +1012,7 @@ class TibiaBot(world: String)(implicit ex: ExecutionContextExecutor, mat: Materi
                     // Create screenshot button
                     val screenshotButton = Button.secondary(
                       s"death_screenshot_${embed._3}_${embed._7}_placeholder", 
-                      "Add Screenshot"
+                      I18nService.getMessage(guildId, MessageKeys.Screenshots.BUTTON_ADD)
                     )
                     val actionRow = ActionRow.of(screenshotButton)
                     
@@ -1026,7 +1026,7 @@ class TibiaBot(world: String)(implicit ex: ExecutionContextExecutor, mat: Materi
                             // Update button with actual message ID
                             val updatedButton = Button.secondary(
                               s"death_screenshot_${embed._3}_${embed._7}_${message.getId}", 
-                              "Add Screenshot"
+                              I18nService.getMessage(guildId, MessageKeys.Screenshots.BUTTON_ADD)
                             )
                             message.editMessageComponents(ActionRow.of(updatedButton)).queue()
                           })
@@ -1037,7 +1037,7 @@ class TibiaBot(world: String)(implicit ex: ExecutionContextExecutor, mat: Materi
                             // Update button with actual message ID
                             val updatedButton = Button.secondary(
                               s"death_screenshot_${embed._3}_${embed._7}_${message.getId}", 
-                              "Add Screenshot"
+                              I18nService.getMessage(guildId, MessageKeys.Screenshots.BUTTON_ADD)
                             )
                             message.editMessageComponents(ActionRow.of(updatedButton)).queue()
                           })
@@ -1054,7 +1054,7 @@ class TibiaBot(world: String)(implicit ex: ExecutionContextExecutor, mat: Materi
                             // Update button with actual message ID
                             val updatedButton = Button.secondary(
                               s"death_screenshot_${embed._3}_${embed._7}_${message.getId}", 
-                              "Add Screenshot"
+                              I18nService.getMessage(guildId, MessageKeys.Screenshots.BUTTON_ADD)
                             )
                             message.editMessageComponents(ActionRow.of(updatedButton)).queue()
                           })
@@ -1065,7 +1065,7 @@ class TibiaBot(world: String)(implicit ex: ExecutionContextExecutor, mat: Materi
                             // Update button with actual message ID
                             val updatedButton = Button.secondary(
                               s"death_screenshot_${embed._3}_${embed._7}_${message.getId}", 
-                              "Add Screenshot"
+                              I18nService.getMessage(guildId, MessageKeys.Screenshots.BUTTON_ADD)
                             )
                             message.editMessageComponents(ActionRow.of(updatedButton)).queue()
                           })
@@ -1080,7 +1080,7 @@ class TibiaBot(world: String)(implicit ex: ExecutionContextExecutor, mat: Materi
                             // Update button with actual message ID
                             val updatedButton = Button.secondary(
                               s"death_screenshot_${embed._3}_${embed._7}_${message.getId}", 
-                              "Add Screenshot"
+                              I18nService.getMessage(guildId, MessageKeys.Screenshots.BUTTON_ADD)
                             )
                             message.editMessageComponents(ActionRow.of(updatedButton)).queue()
                           })
