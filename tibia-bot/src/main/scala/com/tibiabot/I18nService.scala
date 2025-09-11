@@ -138,21 +138,36 @@ object I18nService extends StrictLogging {
     val hours = ChronoUnit.HOURS.between(deathTime, now)
     val days = ChronoUnit.DAYS.between(deathTime, now)
 
-    // Use NumberFormat to ensure proper number formatting for the locale
-    val numberFormat = NumberFormat.getIntegerInstance(language.locale)
-
     if (seconds < 60) {
       if (seconds <= 5) {
         getMessage(guildId, MessageKeys.Time.JUST_NOW)
       } else {
-        getMessage(guildId, MessageKeys.Time.SECONDS_AGO, numberFormat.format(seconds))
+        getMessage(guildId, MessageKeys.Time.SECONDS_AGO, seconds.toString)
       }
     } else if (minutes < 60) {
-      getMessage(guildId, MessageKeys.Time.MINUTES_AGO, numberFormat.format(minutes))
+      getMessage(guildId, MessageKeys.Time.MINUTES_AGO, minutes.toString)
     } else if (hours < 24) {
-      getMessage(guildId, MessageKeys.Time.HOURS_AGO, numberFormat.format(hours))
+      getMessage(guildId, MessageKeys.Time.HOURS_AGO, hours.toString)
     } else {
-      getMessage(guildId, MessageKeys.Time.DAYS_AGO, numberFormat.format(days))
+      getMessage(guildId, MessageKeys.Time.DAYS_AGO, days.toString)
+    }
+  }
+
+  /**
+   * Get localized channel name
+   */
+  def getChannelName(guildId: String, channelType: String): String = {
+    channelType.toLowerCase match {
+      case "online" => getMessage(guildId, MessageKeys.Channels.ONLINE)
+      case "allies" => getMessage(guildId, MessageKeys.Channels.ALLIES)
+      case "enemies" => getMessage(guildId, MessageKeys.Channels.ENEMIES)
+      case "neutrals" => getMessage(guildId, MessageKeys.Channels.NEUTRALS)
+      case "levels" => getMessage(guildId, MessageKeys.Channels.LEVELS)
+      case "deaths" => getMessage(guildId, MessageKeys.Channels.DEATHS)
+      case "activity" => getMessage(guildId, MessageKeys.Channels.ACTIVITY)
+      case "notifications" => getMessage(guildId, MessageKeys.Channels.NOTIFICATIONS)
+      case "command-log" => getMessage(guildId, MessageKeys.Channels.COMMAND_LOG)
+      case _ => channelType // fallback to original name if not found
     }
   }
 }

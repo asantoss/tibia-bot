@@ -402,4 +402,17 @@ object MessageKeys {
     val REMINDER_SET = "notifications.reminder_set"
     val REMINDER_EXPIRED = "notifications.reminder_expired"
   }
+
+  // Channel names
+  object Channels {
+    val ONLINE = "channels.online"
+    val ALLIES = "channels.allies"
+    val ENEMIES = "channels.enemies"
+    val NEUTRALS = "channels.neutrals"
+    val LEVELS = "channels.levels"
+    val DEATHS = "channels.deaths"
+    val ACTIVITY = "channels.activity"
+    val NOTIFICATIONS = "channels.notifications"
+    val COMMAND_LOG = "channels.command_log"
+  }
 }

@@ -5,6 +5,7 @@ import akka.stream.scaladsl.{Keep, Sink, Source}
 import com.tibiabot.tibiadata.TibiaDataClient
 import com.tibiabot.tibiadata.response.{CharacterResponse, GuildResponse, BoostedResponse, CreatureResponse, RaceResponse, Members, HighscoresResponse}
 import com.typesafe.scalalogging.StrictLogging
+import scala.util.Try
 
 // Add imports for i18n support
 import com.tibiabot.I18nService
@@ -3219,7 +3220,7 @@ object BotApp extends App with StrictLogging {
           .grant(Permission.MESSAGE_SEND)
           .complete()
         adminCategory.upsertPermissionOverride(guild.getPublicRole).deny(Permission.VIEW_CHANNEL).queue()
-        val adminChannel = guild.createTextChannel("command-log", adminCategory).complete()
+        val adminChannel = guild.createTextChannel(I18nService.getChannelName(guild.getId, "command-log"), adminCategory).complete()
         // restrict the channel so only roles with Permission.MANAGE_MESSAGES can write to the channels
         adminChannel.upsertPermissionOverride(botRole).grant(Permission.MESSAGE_SEND).complete()
         adminChannel.upsertPermissionOverride(botRole).grant(Permission.VIEW_CHANNEL).complete()
@@ -3227,7 +3228,7 @@ object BotApp extends App with StrictLogging {
         val guildOwner = if (guild.getOwner == null) "Not Available" else guild.getOwner.getEffectiveName
         discordCreateConfig(guild, guild.getName, guildOwner, adminCategory.getId, adminChannel.getId, "0", "0", ZonedDateTime.now())
 
-        val boostedChannel = guild.createTextChannel("notifications", adminCategory).complete()
+        val boostedChannel = guild.createTextChannel(I18nService.getChannelName(guild.getId, "notifications"), adminCategory).complete()
         boostedChannel.upsertPermissionOverride(botRole).grant(Permission.MESSAGE_SEND).complete()
         boostedChannel.upsertPermissionOverride(botRole).grant(Permission.VIEW_CHANNEL).complete()
         boostedChannel.upsertPermissionOverride(botRole).grant(Permission.MESSAGE_EMBED_LINKS).complete()
@@ -3301,7 +3302,7 @@ object BotApp extends App with StrictLogging {
         }
         if (adminChannelCheck == null) {
           // admin channel has been deleted
-          val adminChannel = guild.createTextChannel("command-log", adminCategoryCheck).complete()
+          val adminChannel = guild.createTextChannel(I18nService.getChannelName(guild.getId, "command-log"), adminCategoryCheck).complete()
           adminChannel.upsertPermissionOverride(botRole).grant(Permission.MESSAGE_SEND).complete()
           adminChannel.upsertPermissionOverride(botRole).grant(Permission.VIEW_CHANNEL).complete()
           adminChannel.upsertPermissionOverride(botRole).grant(Permission.MESSAGE_EMBED_LINKS).complete()
@@ -3310,7 +3311,7 @@ object BotApp extends App with StrictLogging {
         }
         if (boostedChannelCheck == null) {
           // admin category still exists
-          val boostedChannel = guild.createTextChannel("notifications", adminCategoryCheck).complete()
+          val boostedChannel = guild.createTextChannel(I18nService.getChannelName(guild.getId, "notifications"), adminCategoryCheck).complete()
           boostedChannel.upsertPermissionOverride(botRole).grant(Permission.MESSAGE_SEND).complete()
           boostedChannel.upsertPermissionOverride(botRole).grant(Permission.VIEW_CHANNEL).complete()
           boostedChannel.upsertPermissionOverride(botRole).grant(Permission.MESSAGE_EMBED_LINKS).complete()
@@ -3384,13 +3385,13 @@ object BotApp extends App with StrictLogging {
           .grant(Permission.MANAGE_CHANNEL)
           .complete()
         newCategory.upsertPermissionOverride(guild.getPublicRole).deny(Permission.MESSAGE_SEND).complete()
-        // create the channels
-        val alliesChannel = guild.createTextChannel("online", newCategory).complete()
-        //val enemiesChannel = guild.createTextChannel("enemies", newCategory).complete()
-        //val neutralsChannel = guild.createTextChannel("neutrals", newCategory).complete()
-        val levelsChannel = guild.createTextChannel("levels", newCategory).complete()
-        val deathsChannel = guild.createTextChannel("deaths", newCategory).complete()
-        val activityChannel = guild.createTextChannel("activity", newCategory).complete()
+        // create the channels with localized names
+        val alliesChannel = guild.createTextChannel(I18nService.getChannelName(guild.getId, "online"), newCategory).complete()
+        //val enemiesChannel = guild.createTextChannel(I18nService.getChannelName(guild.getId, "enemies"), newCategory).complete()
+        //val neutralsChannel = guild.createTextChannel(I18nService.getChannelName(guild.getId, "neutrals"), newCategory).complete()
+        val levelsChannel = guild.createTextChannel(I18nService.getChannelName(guild.getId, "levels"), newCategory).complete()
+        val deathsChannel = guild.createTextChannel(I18nService.getChannelName(guild.getId, "deaths"), newCategory).complete()
+        val activityChannel = guild.createTextChannel(I18nService.getChannelName(guild.getId, "activity"), newCategory).complete()
 
         val publicRole = guild.getPublicRole
         val channelList = List(alliesChannel, levelsChannel, deathsChannel, activityChannel)
@@ -3830,7 +3831,7 @@ object BotApp extends App with StrictLogging {
               }
             }
             // create the online channel
-            val recreateAlliesChannel = guild.createTextChannel("online", category).complete()
+            val recreateAlliesChannel = guild.createTextChannel(I18nService.getChannelName(guild.getId, "online"), category).complete()
             worldRepairConfig(guild, worldFormal, "allies_channel", recreateAlliesChannel.getId)
             // update the record in worldsData
             if (worldsData.contains(guild.getId)) {
@@ -3922,7 +3923,7 @@ object BotApp extends App with StrictLogging {
             }
 
             // create the channels underneath the new/existing category
-            val recreateAlliesChannel = guild.createTextChannel("allies", category).complete()
+            val recreateAlliesChannel = guild.createTextChannel(I18nService.getChannelName(guild.getId, "allies"), category).complete()
             channelList += ((recreateAlliesChannel, false))
             worldRepairConfig(guild, worldFormal, "allies_channel", recreateAlliesChannel.getId)
             // update the record in worldsData
@@ -3940,7 +3941,7 @@ object BotApp extends App with StrictLogging {
             disclaimer += s"\n- *The channel <#${recreateAlliesChannel.getId}> has been recreated (you may want to move it).*"
 
             if (enemiesChannel == null) {
-              val recreateEnemiesChannel = guild.createTextChannel("enemies", category).complete()
+              val recreateEnemiesChannel = guild.createTextChannel(I18nService.getChannelName(guild.getId, "enemies"), category).complete()
               channelList += ((recreateEnemiesChannel, false))
               worldRepairConfig(guild, worldFormal, "enemies_channel", recreateEnemiesChannel.getId)
               // update the record in worldsData
@@ -3959,7 +3960,7 @@ object BotApp extends App with StrictLogging {
             }
 
             if (neutralsChannel == null) {
-              val recreateNeutralsChannel = guild.createTextChannel("neutrals", category).complete()
+              val recreateNeutralsChannel = guild.createTextChannel(I18nService.getChannelName(guild.getId, "neutrals"), category).complete()
               channelList += ((recreateNeutralsChannel, false))
               worldRepairConfig(guild, worldFormal, "neutrals_channel", recreateNeutralsChannel.getId)
               // update the record in worldsData
@@ -4777,7 +4778,7 @@ object BotApp extends App with StrictLogging {
         // create the channels underneath the new/existing category
         if (alliesChannel == null) {
           val alliesName = if (onlineCombinedVal == "false") "allies" else "online"
-          val recreateAlliesChannel = guild.createTextChannel(s"$alliesName", category).complete()
+          val recreateAlliesChannel = guild.createTextChannel(I18nService.getChannelName(guild.getId, alliesName), category).complete()
           channelList += ((recreateAlliesChannel, false))
           worldRepairConfig(guild, worldFormal, "allies_channel", recreateAlliesChannel.getId)
           // update the record in worldsData
@@ -4794,7 +4795,7 @@ object BotApp extends App with StrictLogging {
           }
         }
         if (enemiesChannel == null && onlineCombinedVal == "false") {
-          val recreateEnemiesChannel = guild.createTextChannel("enemies", category).complete()
+          val recreateEnemiesChannel = guild.createTextChannel(I18nService.getChannelName(guild.getId, "enemies"), category).complete()
           channelList += ((recreateEnemiesChannel, false))
           worldRepairConfig(guild, worldFormal, "enemies_channel", recreateEnemiesChannel.getId)
           // update the record in worldsData
@@ -4811,7 +4812,7 @@ object BotApp extends App with StrictLogging {
           }
         }
         if (neutralsChannel == null && onlineCombinedVal == "false") {
-          val recreateNeutralsChannel = guild.createTextChannel("neutrals", category).complete()
+          val recreateNeutralsChannel = guild.createTextChannel(I18nService.getChannelName(guild.getId, "neutrals"), category).complete()
           channelList += ((recreateNeutralsChannel, false))
           worldRepairConfig(guild, worldFormal, "neutrals_channel", recreateNeutralsChannel.getId)
           // update the record in worldsData
@@ -4828,7 +4829,7 @@ object BotApp extends App with StrictLogging {
           }
         }
         if (levelsChannel == null) {
-          val recreateLevelsChannel = guild.createTextChannel("levels", category).complete()
+          val recreateLevelsChannel = guild.createTextChannel(I18nService.getChannelName(guild.getId, "levels"), category).complete()
           channelList += ((recreateLevelsChannel, true))
           worldRepairConfig(guild, worldFormal, "levels_channel", recreateLevelsChannel.getId)
           // update the record in worldsData
@@ -4845,7 +4846,7 @@ object BotApp extends App with StrictLogging {
           }
         }
         if (deathsChannel == null) {
-          val recreateDeathsChannel = guild.createTextChannel("deaths", category).complete()
+          val recreateDeathsChannel = guild.createTextChannel(I18nService.getChannelName(guild.getId, "deaths"), category).complete()
           channelList += ((recreateDeathsChannel, false))
           worldRepairConfig(guild, worldFormal, "deaths_channel", recreateDeathsChannel.getId)
           // update the record in worldsData
@@ -4862,7 +4863,7 @@ object BotApp extends App with StrictLogging {
           }
         }
         if (activityChannel == null) {
-          val recreateActivityChannel = guild.createTextChannel("activity", category).complete()
+          val recreateActivityChannel = guild.createTextChannel(I18nService.getChannelName(guild.getId, "activity"), category).complete()
           channelList += ((recreateActivityChannel, false))
           worldRepairConfig(guild, worldFormal, "activity_channel", recreateActivityChannel.getId)
           // update the record in worldsData
@@ -4898,7 +4899,7 @@ object BotApp extends App with StrictLogging {
             adminCategory = newAdminCategory
           }
           // create the channel
-          val newBoostedChannel = guild.createTextChannel("notifications", adminCategory).complete()
+          val newBoostedChannel = guild.createTextChannel(I18nService.getChannelName(guild.getId, "notifications"), adminCategory).complete()
 
           // restrict the channel so only roles with Permission.MANAGE_MESSAGES can write to the channels
           newBoostedChannel.upsertPermissionOverride(botRole).grant(Permission.MESSAGE_SEND).complete()
@@ -5071,7 +5072,7 @@ object BotApp extends App with StrictLogging {
             adminCategory = newAdminCategory
           }
           // create the channel
-          val newAdminChannel = guild.createTextChannel("command-log", adminCategory).complete()
+          val newAdminChannel = guild.createTextChannel(I18nService.getChannelName(guild.getId, "command-log"), adminCategory).complete()
           // restrict the channel so only roles with Permission.MANAGE_MESSAGES can write to the channels
           newAdminChannel.upsertPermissionOverride(botRole).grant(Permission.MESSAGE_SEND).complete()
           newAdminChannel.upsertPermissionOverride(botRole).grant(Permission.VIEW_CHANNEL).complete()
@@ -6129,6 +6130,67 @@ object BotApp extends App with StrictLogging {
       conn.close()
     }
     
+    // Update channel names if language was set successfully
+    if (success) {
+      updateChannelNames(guildId)
+    }
+    
     success
+  }
+
+  /**
+   * Update existing channel names to match the current language setting
+   */
+  def updateChannelNames(guildId: String): Unit = {
+    Try {
+      val guild = Config.jda.getGuildById(guildId)
+      if (guild != null) {
+        val channelMappings = Map(
+          "command-log" -> MessageKeys.Channels.COMMAND_LOG,
+          "notifications" -> MessageKeys.Channels.NOTIFICATIONS,
+          "online" -> MessageKeys.Channels.ONLINE,
+          "en-linea" -> MessageKeys.Channels.ONLINE, // Spanish
+          "allies" -> MessageKeys.Channels.ALLIES,
+          "aliados" -> MessageKeys.Channels.ALLIES, // Spanish/Portuguese
+          "enemies" -> MessageKeys.Channels.ENEMIES,
+          "enemigos" -> MessageKeys.Channels.ENEMIES, // Spanish
+          "inimigos" -> MessageKeys.Channels.ENEMIES, // Portuguese
+          "neutrals" -> MessageKeys.Channels.NEUTRALS,
+          "neutrales" -> MessageKeys.Channels.NEUTRALS, // Spanish
+          "neutros" -> MessageKeys.Channels.NEUTRALS, // Portuguese
+          "levels" -> MessageKeys.Channels.LEVELS,
+          "niveles" -> MessageKeys.Channels.LEVELS, // Spanish
+          "niveis" -> MessageKeys.Channels.LEVELS, // Portuguese
+          "deaths" -> MessageKeys.Channels.DEATHS,
+          "muertes" -> MessageKeys.Channels.DEATHS, // Spanish
+          "mortes" -> MessageKeys.Channels.DEATHS, // Portuguese
+          "activity" -> MessageKeys.Channels.ACTIVITY,
+          "actividad" -> MessageKeys.Channels.ACTIVITY, // Spanish
+          "atividade" -> MessageKeys.Channels.ACTIVITY, // Portuguese
+          "registro-comandos" -> MessageKeys.Channels.COMMAND_LOG, // Spanish
+          "log-comandos" -> MessageKeys.Channels.COMMAND_LOG, // Portuguese
+          "notificaciones" -> MessageKeys.Channels.NOTIFICATIONS, // Spanish
+          "notificacoes" -> MessageKeys.Channels.NOTIFICATIONS // Portuguese
+        )
+        
+        guild.getTextChannels.forEach { channel =>
+          val currentName = channel.getName.toLowerCase
+          channelMappings.get(currentName) match {
+            case Some(messageKey) =>
+              val newName = I18nService.getMessage(guildId, messageKey)
+              if (newName != currentName && !newName.startsWith("[MISSING:")) {
+                channel.getManager.setName(newName).queue(
+                  _ => logger.info(s"Updated channel name from '$currentName' to '$newName' in guild ${guild.getName}"),
+                  error => logger.warn(s"Failed to update channel name from '$currentName' to '$newName' in guild ${guild.getName}: ${error.getMessage}")
+                )
+              }
+            case None =>
+              // Channel name doesn't match any known translations, skip
+          }
+        }
+      }
+    }.recover {
+      case ex => logger.error(s"Failed to update channel names for guild $guildId: ${ex.getMessage}")
+    }
   }
 }
