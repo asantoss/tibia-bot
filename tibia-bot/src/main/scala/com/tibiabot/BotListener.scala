@@ -870,23 +870,28 @@ class BotListener extends ListenerAdapter with StrictLogging {
                 .setFooter(null)
                 .build()
               
-              val addButton = List(ActionRow.of(Button.secondary(s"death_screenshot_${charName}_${deathTime}_${messageId}", "Add Screenshot")))
+              val addButtonText = I18nService.getMessage(guild.getId, MessageKeys.Screenshots.BUTTON_ADD)
+              val addButton = List(ActionRow.of(Button.secondary(s"death_screenshot_${charName}_${deathTime}_${messageId}", addButtonText)))
               event.getHook.editOriginalEmbeds(updatedEmbed).setComponents(addButton: _*).queue()
             }
             } else {
               // Failed to delete - not the author or admin, or other error
-              event.getHook.sendMessage("❌ You can only delete screenshots you uploaded or have admin permissions.").setEphemeral(true).queue()
+              val errorMessage = I18nService.getMessage(guild.getId, MessageKeys.Screenshots.DELETE_PERMISSION_ERROR)
+              event.getHook.sendMessage(errorMessage).setEphemeral(true).queue()
             }
           } else {
-            event.getHook.sendMessage("❌ Screenshot not found.").setEphemeral(true).queue()
+            val errorMessage = I18nService.getMessage(guild.getId, MessageKeys.Screenshots.NOT_FOUND)
+            event.getHook.sendMessage(errorMessage).setEphemeral(true).queue()
           }
         }
         
         if (worldOpt.isEmpty) {
-          event.getHook.sendMessage("❌ World configuration not found.").setEphemeral(true).queue()
+          val errorMessage = I18nService.getMessage(guild.getId, MessageKeys.Errors.WORLD_NOT_CONFIGURED)
+          event.getHook.sendMessage(errorMessage).setEphemeral(true).queue()
         }
       } else {
-        event.getHook.sendMessage("❌ Invalid button format.").setEphemeral(true).queue()
+        val errorMessage = I18nService.getMessage(event.getGuild.getId, MessageKeys.Errors.INVALID_BUTTON_FORMAT)
+        event.getHook.sendMessage(errorMessage).setEphemeral(true).queue()
       }
     } else {
       event.deferReply(true).queue()

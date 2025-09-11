@@ -6045,4 +6045,82 @@ object BotApp extends App with StrictLogging {
     }
     deleted
   }
+
+  // Guild language preference database methods
+  def getGuildLanguage(guildId: String): Option[String] = {
+    val url = s"jdbc:postgresql://${Config.postgresHost}:5432/_$guildId"
+    val username = "postgres"
+    val password = Config.postgresPassword
+    val conn = DriverManager.getConnection(url, username, password)
+    var language: Option[String] = None
+    
+    try {
+      // Create table if it doesn't exist
+      val createStatement = conn.prepareStatement(
+        """CREATE TABLE IF NOT EXISTS guild_settings (
+          |  setting_key VARCHAR(255) PRIMARY KEY,
+          |  setting_value VARCHAR(255) NOT NULL
+          |)""".stripMargin
+      )
+      createStatement.executeUpdate()
+      createStatement.close()
+      
+      // Get language setting
+      val selectStatement = conn.prepareStatement(
+        "SELECT setting_value FROM guild_settings WHERE setting_key = 'language'"
+      )
+      val resultSet = selectStatement.executeQuery()
+      
+      if (resultSet.next()) {
+        language = Some(resultSet.getString("setting_value"))
+      }
+      
+      resultSet.close()
+      selectStatement.close()
+    } catch {
+      case ex: Exception => logger.error(s"Failed to get guild language for guild $guildId: ${ex.getMessage}")
+    } finally {
+      conn.close()
+    }
+    
+    language
+  }
+  
+  def setGuildLanguage(guildId: String, languageCode: String): Boolean = {
+    val url = s"jdbc:postgresql://${Config.postgresHost}:5432/_$guildId"
+    val username = "postgres"
+    val password = Config.postgresPassword
+    val conn = DriverManager.getConnection(url, username, password)
+    var success = false
+    
+    try {
+      // Create table if it doesn't exist
+      val createStatement = conn.prepareStatement(
+        """CREATE TABLE IF NOT EXISTS guild_settings (
+          |  setting_key VARCHAR(255) PRIMARY KEY,
+          |  setting_value VARCHAR(255) NOT NULL
+          |)""".stripMargin
+      )
+      createStatement.executeUpdate()
+      createStatement.close()
+      
+      // Insert or update language setting
+      val upsertStatement = conn.prepareStatement(
+        """INSERT INTO guild_settings (setting_key, setting_value) 
+          |VALUES ('language', ?) 
+          |ON CONFLICT (setting_key) 
+          |DO UPDATE SET setting_value = EXCLUDED.setting_value""".stripMargin
+      )
+      upsertStatement.setString(1, languageCode)
+      val rowsAffected = upsertStatement.executeUpdate()
+      success = rowsAffected > 0
+      upsertStatement.close()
+    } catch {
+      case ex: Exception => logger.error(s"Failed to set guild language for guild $guildId: ${ex.getMessage}")
+    } finally {
+      conn.close()
+    }
+    
+    success
+  }
 }
