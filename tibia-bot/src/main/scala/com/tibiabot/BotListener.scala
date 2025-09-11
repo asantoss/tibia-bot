@@ -345,7 +345,9 @@ class BotListener extends ListenerAdapter with StrictLogging {
                case Some(world) =>
                  try {
                    // Store the screenshot in database
-                   BotApp.storeDeathScreenshot(guild.getId, world, charName, deathTime, screenshotUrl, event.getUser.getId, messageId)
+                   val member = guild.getMember(event.getUser)
+                  val userName = if (member != null && member.getNickname != null) member.getNickname else event.getUser.getName
+                  BotApp.storeDeathScreenshot(guild.getId, world, charName, deathTime, screenshotUrl, userName, messageId)
                    
                    // Update the original message with the screenshot
                    val channel = guild.getTextChannelById(event.getChannel.getId)
@@ -356,7 +358,7 @@ class BotListener extends ListenerAdapter with StrictLogging {
                          val originalEmbed = embeds.get(0)
                          val updatedEmbed = new EmbedBuilder(originalEmbed)
                            .setImage(screenshotUrl)
-                           .setFooter(s"Screenshot added by ${event.getUser.getName}")
+                           .setFooter(s"Screenshot added by $userName")
                          
                          // Get existing screenshots to check if we need navigation buttons
                          val screenshots = BotApp.getDeathScreenshots(guild.getId, world, charName, deathTime)
@@ -666,7 +668,9 @@ class BotListener extends ListenerAdapter with StrictLogging {
           case Some(world) =>
             // Store pending screenshot request
             val pendingKey = s"${event.getUser.getId}_${guild.getId}"
-            pendingScreenshots.put(pendingKey, PendingScreenshot(charName, deathTime, messageId, guild.getId, world, event.getUser.getId, event.getChannel.getId))
+            val member = guild.getMember(event.getUser)
+            val userName = if (member != null && member.getNickname != null) member.getNickname else event.getUser.getName
+            pendingScreenshots.put(pendingKey, PendingScreenshot(charName, deathTime, messageId, guild.getId, world, userName, event.getChannel.getId))
             
             // Send DM to user
             event.getUser.openPrivateChannel().queue(privateChannel => {
