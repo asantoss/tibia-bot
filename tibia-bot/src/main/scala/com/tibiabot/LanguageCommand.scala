@@ -14,6 +14,20 @@ import com.typesafe.scalalogging.StrictLogging
 object LanguageCommand extends StrictLogging {
   
   /**
+   * Get flag emoji for a language
+   */
+  private def getLanguageFlag(language: I18nService.Language): String = {
+    language match {
+      case I18nService.English => "🇬🇧"
+      case I18nService.Spanish => "🇪🇸"
+      case I18nService.Portuguese => "🇧🇷"
+      case I18nService.German => "🇩🇪"
+      case I18nService.Polish => "🇵🇱"
+      case _ => "🏳️"
+    }
+  }
+  
+  /**
    * Create the slash command data for language configuration
    */
   def createCommand(): CommandData = {
@@ -57,7 +71,8 @@ object LanguageCommand extends StrictLogging {
       I18nService.parseLanguage(languageCode) match {
         case Some(language) =>
           if (I18nService.setGuildLanguage(guild.getId, language)) {
-            val successMessage = I18nService.getMessage(language, "commands.language.set_success", language.locale.getDisplayLanguage)
+            val flag = getLanguageFlag(language)
+            val successMessage = I18nService.getMessage(language, "commands.language.set_success", s"$flag ${language.locale.getDisplayLanguage}")
             val embed = new EmbedBuilder()
               .setTitle("🌐 Language Settings")
               .setDescription(successMessage)
@@ -71,7 +86,8 @@ object LanguageCommand extends StrictLogging {
         case None =>
           val currentLanguage = I18nService.getGuildLanguage(guild.getId)
           val supportedList = I18nService.supportedLanguages.map { lang =>
-            s"• `${lang.code}` - ${lang.locale.getDisplayLanguage}"
+            val flag = getLanguageFlag(lang)
+            s"• $flag `${lang.code}` - ${lang.locale.getDisplayLanguage}"
           }.mkString("\n")
           val errorMessage = I18nService.getMessage(currentLanguage, "commands.language.invalid_language", languageCode, supportedList)
           event.getHook.sendMessage(errorMessage).setEphemeral(true).queue()
@@ -86,7 +102,8 @@ object LanguageCommand extends StrictLogging {
   private def showCurrentLanguage(event: SlashCommandInteractionEvent, guild: Guild): Unit = {
     val currentLanguage = I18nService.getGuildLanguage(guild.getId)
     val languageName = currentLanguage.locale.getDisplayLanguage
-    val message = I18nService.getMessage(currentLanguage, "commands.language.current", languageName)
+    val flag = getLanguageFlag(currentLanguage)
+    val message = I18nService.getMessage(currentLanguage, "commands.language.current", s"$flag $languageName")
     
     val embed = new EmbedBuilder()
       .setTitle("🌐 Current Language Settings")
@@ -102,17 +119,20 @@ object LanguageCommand extends StrictLogging {
     
     val supportedList = I18nService.supportedLanguages.map { lang =>
       val indicator = if (lang == currentLanguage) "✅" else "  "
-      s"$indicator `${lang.code}` - ${lang.locale.getDisplayLanguage}"
+      val flag = getLanguageFlag(lang)
+      s"$indicator $flag `${lang.code}` - ${lang.locale.getDisplayLanguage}"
     }.mkString("\n")
+    
+    val usageExamples = I18nService.supportedLanguages.map { lang =>
+      val flag = getLanguageFlag(lang)
+      s"• `/language set ${lang.code}` - $flag ${lang.locale.getDisplayLanguage}"
+    }.mkString("\n") + "\n• `/language show true` - Show current language"
     
     val embed = new EmbedBuilder()
       .setTitle("🌐 Language Configuration")
       .setDescription(I18nService.getMessage(currentLanguage, "commands.language.help"))
       .addField("Available Languages", supportedList, false)
-      .addField("Usage Examples", 
-        "• `/language set en` - Set to English\n" +
-        "• `/language set es` - Set to Spanish\n" +
-        "• `/language show true` - Show current language", false)
+      .addField("Usage Examples", usageExamples, false)
       .setColor(0x3498DB)
       .build()
     
