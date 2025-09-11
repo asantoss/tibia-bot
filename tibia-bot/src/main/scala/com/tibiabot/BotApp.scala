@@ -6022,7 +6022,7 @@ object BotApp extends App with StrictLogging {
     screenshots.toList
   }
 
-  def deleteDeathScreenshot(guildId: String, world: String, characterName: String, deathTime: Long, screenshotUrl: String, userId: String): Boolean = {
+  def deleteDeathScreenshot(guildId: String, world: String, characterName: String, deathTime: Long, screenshotUrl: String, userName: String, isAdmin: Boolean): Boolean = {
     val url = s"jdbc:postgresql://${Config.postgresHost}:5432/_$guildId"
     val username = "postgres"
     val password = Config.postgresPassword
@@ -6042,7 +6042,7 @@ object BotApp extends App with StrictLogging {
       
       if (resultSet.next()) {
         val addedBy = resultSet.getString("added_by")
-        if (addedBy == userId) { // User can delete their own screenshots
+        if (addedBy == userName || isAdmin) { // User can delete their own screenshots or admin can delete any
           val deleteStatement = conn.prepareStatement(
             "DELETE FROM death_screenshots WHERE guild_id = ? AND world = ? AND character_name = ? AND death_time = ? AND screenshot_url = ?"
           )

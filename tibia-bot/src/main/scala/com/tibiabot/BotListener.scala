@@ -372,14 +372,20 @@ class BotListener extends ListenerAdapter with StrictLogging {
                              Button.secondary(s"screenshot_info_${charName}_${deathTime}_${messageId}", s"1/${screenshotCount}").asDisabled(),
                              Button.primary(s"next_screenshot_${charName}_${deathTime}_${messageId}_0", "▶")
                            )
-                           if (latestScreenshot != null && latestScreenshot.addedBy == event.getUser.getId) {
+                           val memberCheck = guild.getMember(event.getUser)
+                           val userNameCheck = if (memberCheck != null && memberCheck.getNickname != null) memberCheck.getNickname else event.getUser.getName
+                           val isAdmin = memberCheck != null && memberCheck.hasPermission(net.dv8tion.jda.api.Permission.ADMINISTRATOR)
+                           if (latestScreenshot != null && (latestScreenshot.addedBy == userNameCheck || isAdmin)) {
                              baseButtons :+ Button.danger(s"delete_screenshot_${charName}_${deathTime}_${messageId}_0", "🗑️")
                            } else {
                              baseButtons
                            }
                          } else {
                            val baseButtons = List(Button.secondary(s"death_screenshot_${charName}_${deathTime}_${messageId}", "Add Screenshot"))
-                           if (latestScreenshot != null && latestScreenshot.addedBy == event.getUser.getId) {
+                           val memberCheck = guild.getMember(event.getUser)
+                           val userNameCheck = if (memberCheck != null && memberCheck.getNickname != null) memberCheck.getNickname else event.getUser.getName
+                           val isAdmin = memberCheck != null && memberCheck.hasPermission(net.dv8tion.jda.api.Permission.ADMINISTRATOR)
+                           if (latestScreenshot != null && (latestScreenshot.addedBy == userNameCheck || isAdmin)) {
                              baseButtons :+ Button.danger(s"delete_screenshot_${charName}_${deathTime}_${messageId}_0", "🗑️")
                            } else {
                              baseButtons
@@ -757,7 +763,10 @@ class BotListener extends ListenerAdapter with StrictLogging {
                 Button.secondary(s"screenshot_info_${charName}_${deathTime}_${messageId}", s"${newIndex + 1}/${screenshots.length}").asDisabled(),
                 Button.primary(s"next_screenshot_${charName}_${deathTime}_${messageId}_${newIndex}", "▶")
               )
-              val buttonsWithDelete = if (currentScreenshot.addedBy == event.getUser.getId) {
+              val memberCheck = guild.getMember(event.getUser)
+              val userNameCheck = if (memberCheck != null && memberCheck.getNickname != null) memberCheck.getNickname else event.getUser.getName
+              val isAdmin = memberCheck != null && memberCheck.hasPermission(net.dv8tion.jda.api.Permission.ADMINISTRATOR)
+              val buttonsWithDelete = if (currentScreenshot.addedBy == userNameCheck || isAdmin) {
                 baseButtons :+ Button.danger(s"delete_screenshot_${charName}_${deathTime}_${messageId}_${newIndex}", "🗑️")
               } else {
                 baseButtons
@@ -765,7 +774,10 @@ class BotListener extends ListenerAdapter with StrictLogging {
               List(ActionRow.of(buttonsWithDelete: _*))
             } else {
               val baseButtons = List(Button.secondary(s"death_screenshot_${charName}_${deathTime}_${messageId}", "Add Screenshot"))
-              val buttonsWithDelete = if (currentScreenshot.addedBy == event.getUser.getId) {
+              val memberCheck = guild.getMember(event.getUser)
+              val userNameCheck = if (memberCheck != null && memberCheck.getNickname != null) memberCheck.getNickname else event.getUser.getName
+              val isAdmin = memberCheck != null && memberCheck.hasPermission(net.dv8tion.jda.api.Permission.ADMINISTRATOR)
+              val buttonsWithDelete = if (currentScreenshot.addedBy == userNameCheck || isAdmin) {
                 baseButtons :+ Button.danger(s"delete_screenshot_${charName}_${deathTime}_${messageId}_${newIndex}", "🗑️")
               } else {
                 baseButtons
@@ -797,7 +809,10 @@ class BotListener extends ListenerAdapter with StrictLogging {
           val screenshotToDelete = screenshots(currentIndex)
           
           // Attempt to delete the screenshot
-          if (BotApp.deleteDeathScreenshot(guild.getId, guild.getName, charName, deathTime, screenshotToDelete.screenshotUrl, user.getId)) {
+          val memberCheck = guild.getMember(user)
+          val userNameCheck = if (memberCheck != null && memberCheck.getNickname != null) memberCheck.getNickname else user.getName
+          val isAdmin = memberCheck != null && memberCheck.hasPermission(net.dv8tion.jda.api.Permission.ADMINISTRATOR)
+          if (BotApp.deleteDeathScreenshot(guild.getId, guild.getName, charName, deathTime, screenshotToDelete.screenshotUrl, userNameCheck, isAdmin)) {
             // Successfully deleted, update the embed
             val updatedScreenshots = BotApp.getDeathScreenshots(guild.getId, guild.getName, charName, deathTime)
             val embeds = originalMessage.getEmbeds
@@ -820,7 +835,10 @@ class BotListener extends ListenerAdapter with StrictLogging {
                   Button.secondary(s"screenshot_info_${charName}_${deathTime}_${messageId}", s"${newIndex + 1}/${updatedScreenshots.length}").asDisabled(),
                   Button.primary(s"next_screenshot_${charName}_${deathTime}_${messageId}_${newIndex}", "▶")
                 )
-                val buttonsWithDelete = if (newCurrentScreenshot.addedBy == user.getId) {
+                val memberCheck = guild.getMember(user)
+                val userNameCheck = if (memberCheck != null && memberCheck.getNickname != null) memberCheck.getNickname else user.getName
+                val isAdmin = memberCheck != null && memberCheck.hasPermission(net.dv8tion.jda.api.Permission.ADMINISTRATOR)
+                val buttonsWithDelete = if (newCurrentScreenshot.addedBy == userNameCheck || isAdmin) {
                   baseButtons :+ Button.danger(s"delete_screenshot_${charName}_${deathTime}_${messageId}_${newIndex}", "🗑️")
                 } else {
                   baseButtons
@@ -828,7 +846,10 @@ class BotListener extends ListenerAdapter with StrictLogging {
                 List(ActionRow.of(buttonsWithDelete: _*))
               } else {
                 val baseButtons = List(Button.secondary(s"death_screenshot_${charName}_${deathTime}_${messageId}", "Add Screenshot"))
-                val buttonsWithDelete = if (newCurrentScreenshot.addedBy == user.getId) {
+                val memberCheck = guild.getMember(user)
+                val userNameCheck = if (memberCheck != null && memberCheck.getNickname != null) memberCheck.getNickname else user.getName
+                val isAdmin = memberCheck != null && memberCheck.hasPermission(net.dv8tion.jda.api.Permission.ADMINISTRATOR)
+                val buttonsWithDelete = if (newCurrentScreenshot.addedBy == userNameCheck || isAdmin) {
                   baseButtons :+ Button.danger(s"delete_screenshot_${charName}_${deathTime}_${messageId}_${newIndex}", "🗑️")
                 } else {
                   baseButtons
@@ -849,8 +870,8 @@ class BotListener extends ListenerAdapter with StrictLogging {
               event.getHook.editOriginalEmbeds(updatedEmbed).setComponents(addButton: _*).queue()
             }
           } else {
-            // Failed to delete - not the author or other error
-            event.getHook.sendMessage("❌ You can only delete screenshots you uploaded.").setEphemeral(true).queue()
+            // Failed to delete - not the author or admin, or other error
+            event.getHook.sendMessage("❌ You can only delete screenshots you uploaded or have admin permissions.").setEphemeral(true).queue()
           }
         } else {
           event.getHook.sendMessage("❌ Screenshot not found.").setEphemeral(true).queue()
@@ -1651,14 +1672,20 @@ class BotListener extends ListenerAdapter with StrictLogging {
                         Button.secondary(s"screenshot_info_${pending.charName}_${pending.deathTime}_${pending.messageId}", s"${screenshotCount}/${screenshotCount}").asDisabled(),
                         Button.primary(s"next_screenshot_${pending.charName}_${pending.deathTime}_${pending.messageId}_${latestIndex}", "▶")
                       )
-                      if (latestScreenshot != null && latestScreenshot.addedBy == user.getId) {
+                      val memberCheck = guild.getMember(user)
+                      val userNameCheck = if (memberCheck != null && memberCheck.getNickname != null) memberCheck.getNickname else user.getName
+                      val isAdmin = memberCheck != null && memberCheck.hasPermission(net.dv8tion.jda.api.Permission.ADMINISTRATOR)
+                      if (latestScreenshot != null && (latestScreenshot.addedBy == userNameCheck || isAdmin)) {
                         baseButtons :+ Button.danger(s"delete_screenshot_${pending.charName}_${pending.deathTime}_${pending.messageId}_${latestIndex}", "🗑️")
                       } else {
                         baseButtons
                       }
                     } else {
                       val baseButtons = List(Button.secondary(s"death_screenshot_${pending.charName}_${pending.deathTime}_${pending.messageId}", "Add Screenshot"))
-                      if (latestScreenshot != null && latestScreenshot.addedBy == user.getId) {
+                      val memberCheck = guild.getMember(user)
+                      val userNameCheck = if (memberCheck != null && memberCheck.getNickname != null) memberCheck.getNickname else user.getName
+                      val isAdmin = memberCheck != null && memberCheck.hasPermission(net.dv8tion.jda.api.Permission.ADMINISTRATOR)
+                      if (latestScreenshot != null && (latestScreenshot.addedBy == userNameCheck || isAdmin)) {
                         baseButtons :+ Button.danger(s"delete_screenshot_${pending.charName}_${pending.deathTime}_${pending.messageId}_${latestIndex}", "🗑️")
                       } else {
                         baseButtons
@@ -1750,14 +1777,20 @@ class BotListener extends ListenerAdapter with StrictLogging {
                         Button.secondary(s"screenshot_info_${pending.charName}_${pending.deathTime}_${pending.messageId}", s"${screenshotCount}/${screenshotCount}").asDisabled(),
                         Button.primary(s"next_screenshot_${pending.charName}_${pending.deathTime}_${pending.messageId}_${latestIndex}", "▶")
                       )
-                      if (latestScreenshot != null && latestScreenshot.addedBy == user.getId) {
+                      val memberCheck = guild.getMember(user)
+                      val userNameCheck = if (memberCheck != null && memberCheck.getNickname != null) memberCheck.getNickname else user.getName
+                      val isAdmin = memberCheck != null && memberCheck.hasPermission(net.dv8tion.jda.api.Permission.ADMINISTRATOR)
+                      if (latestScreenshot != null && (latestScreenshot.addedBy == userNameCheck || isAdmin)) {
                         baseButtons :+ Button.danger(s"delete_screenshot_${pending.charName}_${pending.deathTime}_${pending.messageId}_${latestIndex}", "🗑️")
                       } else {
                         baseButtons
                       }
                     } else {
                       val baseButtons = List(Button.secondary(s"death_screenshot_${pending.charName}_${pending.deathTime}_${pending.messageId}", "Add Screenshot"))
-                      if (latestScreenshot != null && latestScreenshot.addedBy == user.getId) {
+                      val memberCheck = guild.getMember(user)
+                      val userNameCheck = if (memberCheck != null && memberCheck.getNickname != null) memberCheck.getNickname else user.getName
+                      val isAdmin = memberCheck != null && memberCheck.hasPermission(net.dv8tion.jda.api.Permission.ADMINISTRATOR)
+                      if (latestScreenshot != null && (latestScreenshot.addedBy == userNameCheck || isAdmin)) {
                         baseButtons :+ Button.danger(s"delete_screenshot_${pending.charName}_${pending.deathTime}_${pending.messageId}_${latestIndex}", "🗑️")
                       } else {
                         baseButtons
