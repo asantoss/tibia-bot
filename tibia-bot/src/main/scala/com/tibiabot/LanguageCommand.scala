@@ -36,19 +36,18 @@ object LanguageCommand extends StrictLogging {
   def handleCommand(event: SlashCommandInteractionEvent): Unit = {
     val guild = event.getGuild
     if (guild == null) {
-      event.reply("❌ This command can only be used in a server.").setEphemeral(true).queue()
+      // Default to English since we don't have a guild ID
+      val errorMessage = I18nService.getMessage("en", MessageKeys.Commands.SERVER_ONLY) 
+      event.getHook.sendMessage(errorMessage).setEphemeral(true).queue()
       return
     }
     
     val member = event.getMember
     if (member == null || !member.hasPermission(Permission.ADMINISTRATOR)) {
       val errorMessage = I18nService.getMessage(guild.getId, MessageKeys.Commands.PERMISSION_DENIED)
-      event.reply(errorMessage).setEphemeral(true).queue()
+      event.getHook.sendMessage(errorMessage).setEphemeral(true).queue()
       return
     }
-    
-    // Defer reply to avoid interaction timeout
-    event.deferReply().queue()
     
     val setOption = event.getOption("set")
     val showOption = event.getOption("show")

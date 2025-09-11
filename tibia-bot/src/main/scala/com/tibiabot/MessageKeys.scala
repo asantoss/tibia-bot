@@ -13,6 +13,7 @@ object MessageKeys {
     val SETUP_ALREADY_CONFIGURED = "commands.setup.already_configured"
     val INVALID_WORLD = "commands.invalid_world"
     val PERMISSION_DENIED = "commands.permission_denied"
+    val SERVER_ONLY = "commands.server_only"
     val COMMAND_ERROR = "commands.error"
     val INVALID_SUBCOMMAND = "commands.invalid_subcommand"
     val INVALID_SUBCOMMAND_GROUP = "commands.invalid_subcommand_group"
@@ -63,6 +64,7 @@ object MessageKeys {
   // Death tracking
   object Deaths {
     val DEATH_DETECTED = "deaths.death_detected"
+    val DIED = "deaths.died"
     val LEVEL_LOSS = "deaths.level_loss"
     val NO_LEVEL_LOSS = "deaths.no_level_loss"
     val KILLED_BY = "deaths.killed_by"
@@ -75,6 +77,7 @@ object MessageKeys {
     val PLAYER_ONLINE = "online.player_online"
     val PLAYER_OFFLINE = "online.player_offline"
     val LEVEL_UP = "online.level_up"
+    val ADVANCED_TO_LEVEL = "online.advanced_to_level"
     val LEVEL_DOWN = "online.level_down"
     val VOCATION_CHANGE = "online.vocation_change"
   }

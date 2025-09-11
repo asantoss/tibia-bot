@@ -568,7 +568,8 @@ class TibiaBot(world: String)(implicit ex: ExecutionContextExecutor, mat: Materi
                   }
                   val worldData = worldsData.getOrElse(guildId, List()).filter(w => w.name.toLowerCase() == world.toLowerCase())
                   val levelsChannel = worldData.headOption.map(_.levelsChannel).getOrElse("0")
-                  val webhookMessage = s"${vocEmoji(onlinePlayer.vocation)} **[$charName](${charUrl(charName)})** advanced to level **${onlinePlayer.level}** $guildIcon"
+                  val levelMessage = I18nService.getMessage(guildId, MessageKeys.Online.ADVANCED_TO_LEVEL, s"[$charName](${charUrl(charName)})", onlinePlayer.level)
+                  val webhookMessage = s"${vocEmoji(onlinePlayer.vocation)} $levelMessage $guildIcon"
                   val levelsTextChannel = guild.getTextChannelById(levelsChannel)
                   if (levelsTextChannel != null) {
                     if (levelsTextChannel.canTalk() || (!Config.prod)) {
@@ -698,7 +699,7 @@ class TibiaBot(world: String)(implicit ex: ExecutionContextExecutor, mat: Materi
               var notablePoke = ""
               val charName = charDeath.char.character.character.name
               val killer = charDeath.death.killers.last.name
-              var context = "Died"
+              val context = I18nService.getMessage(guildId, MessageKeys.Deaths.DIED)
               var embedColor = 3092790 // background default
               var embedThumbnail = creatureImageUrl(killer)
               var vowelCheck = "" // this is for adding "an" or "a" in front of creature names
@@ -952,7 +953,9 @@ class TibiaBot(world: String)(implicit ex: ExecutionContextExecutor, mat: Materi
               val epochSecond = ZonedDateTime.parse(charDeath.death.time).toEpochSecond
 
               // this is the actual embed description
-              var embedText = s"$guildText$context <t:$epochSecond:R> at level ${charDeath.death.level.toInt}\nby $killerText.$exivaList"
+              val atLevelText = I18nService.getMessage(guildId, MessageKeys.Deaths.AT_LEVEL, charDeath.death.level.toInt)
+              val killedByPrefix = I18nService.getMessage(guildId, MessageKeys.Deaths.KILLED_BY, "").split(":").head.trim // Get "Asesinado por" or "Killed by" part
+              var embedText = s"$guildText$context <t:$epochSecond:R> $atLevelText\n$killedByPrefix $killerText.$exivaList"
 
               // if the length is over 4065 truncate it
               val embedLength = embedText.length
