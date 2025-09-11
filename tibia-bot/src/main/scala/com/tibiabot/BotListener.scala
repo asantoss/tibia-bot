@@ -803,18 +803,22 @@ class BotListener extends ListenerAdapter with StrictLogging {
         val user = event.getUser
         val originalMessage = event.getMessage
         
-        // Get current screenshots to find the URL of the screenshot to delete
-        val screenshots = BotApp.getDeathScreenshots(guild.getId, guild.getName, charName, deathTime)
-        if (screenshots.nonEmpty && currentIndex < screenshots.length) {
-          val screenshotToDelete = screenshots(currentIndex)
-          
-          // Attempt to delete the screenshot
-          val memberCheck = guild.getMember(user)
-          val userNameCheck = if (memberCheck != null && memberCheck.getNickname != null) memberCheck.getNickname else user.getName
-          val isAdmin = memberCheck != null && memberCheck.hasPermission(net.dv8tion.jda.api.Permission.ADMINISTRATOR)
-          if (BotApp.deleteDeathScreenshot(guild.getId, guild.getName, charName, deathTime, screenshotToDelete.screenshotUrl, userNameCheck, isAdmin)) {
-            // Successfully deleted, update the embed
-            val updatedScreenshots = BotApp.getDeathScreenshots(guild.getId, guild.getName, charName, deathTime)
+        // Get world from guild configuration
+        val worldOpt = worldsData.get(guild.getId).flatMap(_.headOption).map(_.name)
+        
+        worldOpt.foreach { world =>
+          // Get current screenshots to find the URL of the screenshot to delete
+          val screenshots = BotApp.getDeathScreenshots(guild.getId, world, charName, deathTime)
+          if (screenshots.nonEmpty && currentIndex < screenshots.length) {
+            val screenshotToDelete = screenshots(currentIndex)
+            
+            // Attempt to delete the screenshot
+            val memberCheck = guild.getMember(user)
+            val userNameCheck = if (memberCheck != null && memberCheck.getNickname != null) memberCheck.getNickname else user.getName
+            val isAdmin = memberCheck != null && memberCheck.hasPermission(net.dv8tion.jda.api.Permission.ADMINISTRATOR)
+            if (BotApp.deleteDeathScreenshot(guild.getId, world, charName, deathTime, screenshotToDelete.screenshotUrl, userNameCheck, isAdmin)) {
+              // Successfully deleted, update the embed
+              val updatedScreenshots = BotApp.getDeathScreenshots(guild.getId, world, charName, deathTime)
             val embeds = originalMessage.getEmbeds
             
             if (embeds.size() > 0 && updatedScreenshots.nonEmpty) {
@@ -869,12 +873,17 @@ class BotListener extends ListenerAdapter with StrictLogging {
               val addButton = List(ActionRow.of(Button.secondary(s"death_screenshot_${charName}_${deathTime}_${messageId}", "Add Screenshot")))
               event.getHook.editOriginalEmbeds(updatedEmbed).setComponents(addButton: _*).queue()
             }
+            } else {
+              // Failed to delete - not the author or admin, or other error
+              event.getHook.sendMessage("❌ You can only delete screenshots you uploaded or have admin permissions.").setEphemeral(true).queue()
+            }
           } else {
-            // Failed to delete - not the author or admin, or other error
-            event.getHook.sendMessage("❌ You can only delete screenshots you uploaded or have admin permissions.").setEphemeral(true).queue()
+            event.getHook.sendMessage("❌ Screenshot not found.").setEphemeral(true).queue()
           }
-        } else {
-          event.getHook.sendMessage("❌ Screenshot not found.").setEphemeral(true).queue()
+        }
+        
+        if (worldOpt.isEmpty) {
+          event.getHook.sendMessage("❌ World configuration not found.").setEphemeral(true).queue()
         }
       } else {
         event.getHook.sendMessage("❌ Invalid button format.").setEphemeral(true).queue()
