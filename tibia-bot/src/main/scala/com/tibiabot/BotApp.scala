@@ -432,7 +432,7 @@ object BotApp extends App with StrictLogging {
   startBot(None, None) // guild: Option[Guild], world: Option[String]
 
   // run the scheduler to clean cache and update dashboard every hour
-  actorSystem.scheduler.schedule(60.seconds, 30.seconds) {
+  actorSystem.scheduler.schedule(60.seconds, 2.minutes) {
     // set activity status
     // only do this every second cycle
     if (updateOnOdd) {
