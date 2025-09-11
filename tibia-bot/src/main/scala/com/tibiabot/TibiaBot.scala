@@ -776,12 +776,8 @@ class TibiaBot(world: String)(implicit ex: ExecutionContextExecutor, mat: Materi
                         embedColor = 14869218 // bone white
                       }
                       embedThumbnail = creatureImageUrl("Phantasmal_Ooze")
-                      logger.info(s"Processing killer name: '${k.name}' (player: ${k.player}, summon: '${k.summon}')")
                       val isSummon = k.name.split(" of ", 2) // e.g: fire elemental of Lemon Beams
-                      logger.info(s"Split result: ${isSummon.toList} (length: ${isSummon.length})")
                       if (isSummon.length > 1) {
-                        logger.info(s"Split detected - Part 0: '${isSummon(0)}', Part 1: '${isSummon(1)}'")
-                        logger.info(s"First part contains uppercase: ${isSummon(0).exists(_.isUpper)}")
                         if (!isSummon(0).exists(_.isUpper)) { // summons will be lowercase, a player with " of " in their name will have a capital letter
                           val vowel = isSummon(0).take(1) match {
                           case "a" => "an"
@@ -1638,15 +1634,12 @@ class TibiaBot(world: String)(implicit ex: ExecutionContextExecutor, mat: Materi
   }
 
   private def getKillerLevel(killerName: String): Option[Int] = {
-    logger.info(s"getKillerLevel called for: $killerName")
     
     // Check the dedicated online list table for the killer
     val onlineLevel = onlineListTable.get(killerName.toLowerCase).map(_.level)
     if (onlineLevel.isDefined) {
-      logger.info(s"Found level ${onlineLevel.get} for $killerName in online list table")
       onlineLevel
     } else {
-      logger.info(s"$killerName not found in online list table - killer may be offline, trying TibiaData API")
       
       // Fallback to TibiaData API
       try {
@@ -1654,7 +1647,6 @@ class TibiaBot(world: String)(implicit ex: ExecutionContextExecutor, mat: Materi
         characterResponse match {
           case Right(response) =>
             val level = response.character.character.level.toInt
-            logger.info(s"Found level $level for $killerName via TibiaData API")
             Some(level)
           case Left(error) =>
             logger.warn(s"Failed to get character $killerName from TibiaData API: $error")
