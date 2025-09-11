@@ -413,7 +413,10 @@ object BotApp extends App with StrictLogging {
         )
     )
 
-  lazy val commands = List(setupCommand, removeCommand, huntedCommand, alliesCommand, neutralsCommand, fullblessCommand, filterCommand, exivaCommand, helpCommand, repairCommand, onlineCombineCommand, boostedCommand, galthenCommand, LanguageCommand.createCommand())
+  // reload command
+  private val reloadCommand: SlashCommandData = Commands.slash("reload", I18nService.getMessage("en", MessageKeys.Commands.RELOAD_DESCRIPTION))
+
+  lazy val commands = List(setupCommand, removeCommand, huntedCommand, alliesCommand, neutralsCommand, fullblessCommand, filterCommand, exivaCommand, helpCommand, repairCommand, onlineCombineCommand, boostedCommand, galthenCommand, LanguageCommand.createCommand(), reloadCommand)
 
   // create the deaths/levels cache db
   createCacheDatabase()

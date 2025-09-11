@@ -34,6 +34,10 @@ object MessageKeys {
     val ONLINE_DESCRIPTION = "commands.online.description"
     val BOOSTED_DESCRIPTION = "commands.boosted.description"
     val LANGUAGE_DESCRIPTION = "commands.language.description"
+    val RELOAD_DESCRIPTION = "commands.reload.description"
+    val RELOAD_SUCCESS = "commands.reload.success"
+    val RELOAD_ERROR = "commands.reload.error"
+    val RELOAD_PERMISSION_ERROR = "commands.reload.permission_error"
   }
   
   // Screenshot functionality

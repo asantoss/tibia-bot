@@ -32,8 +32,8 @@ class BotListener extends ListenerAdapter with StrictLogging {
     event.deferReply(true).queue()
     if (BotApp.startUpComplete) {
       event.getName match {
-        //case "reload" =>
-        //  handleReload(event)
+        case "reload" =>
+          handleReload(event)
         case "setup" =>
           handleSetup(event)
         case "remove" =>
@@ -1023,6 +1023,42 @@ class BotListener extends ListenerAdapter with StrictLogging {
       }
       val replyEmbed = new EmbedBuilder().setDescription(responseText).build()
       event.getHook.sendMessageEmbeds(replyEmbed).queue()
+    }
+  }
+
+  private def handleReload(event: SlashCommandInteractionEvent): Unit = {
+    val guild = event.getGuild
+    val member = event.getMember
+    
+    // Check if user has administrator permissions
+    if (member == null || !member.hasPermission(Permission.ADMINISTRATOR)) {
+      val embed = new EmbedBuilder()
+        .setDescription(I18nService.getMessage(guild.getId, MessageKeys.Commands.RELOAD_PERMISSION_ERROR))
+        .setColor(0xFF0000)
+        .build()
+      event.getHook.sendMessageEmbeds(embed).queue()
+      return
+    }
+    
+    try {
+      // Reload commands for this guild
+      guild.updateCommands().addCommands(BotApp.commands.asJava).complete()
+      
+      val embed = new EmbedBuilder()
+        .setDescription(I18nService.getMessage(guild.getId, MessageKeys.Commands.RELOAD_SUCCESS))
+        .setColor(0x00FF00)
+        .build()
+      event.getHook.sendMessageEmbeds(embed).queue()
+      
+      logger.info(s"Commands reloaded for guild: ${guild.getName} (${guild.getId})")
+    } catch {
+      case ex: Exception =>
+        logger.error(s"Failed to reload commands for guild ${guild.getName}: ${ex.getMessage}", ex)
+        val embed = new EmbedBuilder()
+          .setDescription(I18nService.getMessage(guild.getId, MessageKeys.Commands.RELOAD_ERROR))
+          .setColor(0xFF0000)
+          .build()
+        event.getHook.sendMessageEmbeds(embed).queue()
     }
   }
 
