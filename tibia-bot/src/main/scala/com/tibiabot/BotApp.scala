@@ -111,6 +111,10 @@ object BotApp extends App with StrictLogging {
   com.tibiabot.scheduler.DailyScheduler.initialize(jda)
   logger.info("DailyScheduler initialized")
   
+  // Initialize RateLimitManager to handle message edits properly
+  RateLimitManager.initialize()
+  logger.info("RateLimitManager initialized")
+  
   // Setup emojis for all guilds (async)
   import scala.concurrent.ExecutionContext.Implicits.global
   jda.getGuilds.asScala.foreach { guild =>

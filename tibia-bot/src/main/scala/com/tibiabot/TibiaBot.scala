@@ -1023,23 +1023,23 @@ class TibiaBot(world: String)(implicit ex: ExecutionContextExecutor, mat: Materi
                           .setEmbeds(embed._1.build())
                           .setComponents(actionRow)
                           .queue(message => {
-                            // Update button with actual message ID
+                            // Schedule button update with delay to avoid rate limits
                             val updatedButton = Button.secondary(
                               s"death_screenshot_${embed._3}_${embed._7}_${message.getId}", 
                               I18nService.getMessage(guildId, MessageKeys.Screenshots.BUTTON_ADD)
                             )
-                            message.editMessageComponents(ActionRow.of(updatedButton)).queue()
+                            RateLimitManager.scheduleComponentUpdate(message, ActionRow.of(updatedButton))
                           })
                       } else {
                         deathsTextChannel.sendMessageEmbeds(embed._1.build())
                           .setComponents(actionRow)
                           .queue(message => {
-                            // Update button with actual message ID
+                            // Schedule button update with delay to avoid rate limits
                             val updatedButton = Button.secondary(
                               s"death_screenshot_${embed._3}_${embed._7}_${message.getId}", 
                               I18nService.getMessage(guildId, MessageKeys.Screenshots.BUTTON_ADD)
                             )
-                            message.editMessageComponents(ActionRow.of(updatedButton)).queue()
+                            RateLimitManager.scheduleComponentUpdate(message, ActionRow.of(updatedButton))
                           })
                       }
                     } else if (embed._2 == "fullbless") {
@@ -1051,23 +1051,23 @@ class TibiaBot(world: String)(implicit ex: ExecutionContextExecutor, mat: Materi
                           .setEmbeds(adjustedEmbed.build())
                           .setComponents(actionRow)
                           .queue(message => {
-                            // Update button with actual message ID
+                            // Schedule button update with delay to avoid rate limits
                             val updatedButton = Button.secondary(
                               s"death_screenshot_${embed._3}_${embed._7}_${message.getId}", 
                               I18nService.getMessage(guildId, MessageKeys.Screenshots.BUTTON_ADD)
                             )
-                            message.editMessageComponents(ActionRow.of(updatedButton)).queue()
+                            RateLimitManager.scheduleComponentUpdate(message, ActionRow.of(updatedButton))
                           })
                       } else {
                         deathsTextChannel.sendMessageEmbeds(adjustedEmbed.build())
                           .setComponents(actionRow)
                           .queue(message => {
-                            // Update button with actual message ID
+                            // Schedule button update with delay to avoid rate limits
                             val updatedButton = Button.secondary(
                               s"death_screenshot_${embed._3}_${embed._7}_${message.getId}", 
                               I18nService.getMessage(guildId, MessageKeys.Screenshots.BUTTON_ADD)
                             )
-                            message.editMessageComponents(ActionRow.of(updatedButton)).queue()
+                            RateLimitManager.scheduleComponentUpdate(message, ActionRow.of(updatedButton))
                           })
                       }
                     } else {
@@ -1077,12 +1077,12 @@ class TibiaBot(world: String)(implicit ex: ExecutionContextExecutor, mat: Materi
                           .setComponents(actionRow)
                           .setSuppressedNotifications(true)
                           .queue(message => {
-                            // Update button with actual message ID
+                            // Schedule button update with delay to avoid rate limits
                             val updatedButton = Button.secondary(
                               s"death_screenshot_${embed._3}_${embed._7}_${message.getId}", 
                               I18nService.getMessage(guildId, MessageKeys.Screenshots.BUTTON_ADD)
                             )
-                            message.editMessageComponents(ActionRow.of(updatedButton)).queue()
+                            RateLimitManager.scheduleComponentUpdate(message, ActionRow.of(updatedButton))
                           })
                       }
                     }

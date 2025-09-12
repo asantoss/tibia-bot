@@ -227,10 +227,10 @@ object DailyScheduler extends StrictLogging {
           val latestNews = newsResponse.news.news.take(3) // Show only latest 3 news items
           if (latestNews.nonEmpty) {
             val newsText = latestNews.map { newsItem =>
-              val truncatedTitle = if (newsItem.title.length > 80) {
-                newsItem.title.take(77) + "..."
+              val truncatedTitle = if (newsItem.news.length > 80) {
+                newsItem.news.take(77) + "..."
               } else {
-                newsItem.title
+                newsItem.news
               }
               s"• [${truncatedTitle}](${newsItem.url})"
             }.mkString("\n")
@@ -262,13 +262,13 @@ object DailyScheduler extends StrictLogging {
     tickerResult match {
       case Right(tickerResponse) =>
         try {
-          val recentTickers = tickerResponse.newstickers.newstickers.take(2) // Show only 2 most recent
+          val recentTickers = tickerResponse.news.news.take(2) // Show only 2 most recent
           if (recentTickers.nonEmpty) {
             val tickerText = recentTickers.map { ticker =>
-              val truncatedMessage = if (ticker.message.length > 100) {
-                ticker.message.take(97) + "..."
+              val truncatedMessage = if (ticker.news.length > 100) {
+                ticker.news.take(97) + "..."
               } else {
-                ticker.message
+                ticker.news
               }
               s"📢 ${truncatedMessage}"
             }.mkString("\n")
