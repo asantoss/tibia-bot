@@ -27,4 +27,9 @@ libraryDependencies += "org.scalactic" %% "scalactic" % "3.2.15"
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.15" % Test
 libraryDependencies += "org.scalamock" %% "scalamock" % "5.2.0" % Test
 
-resolvers += "jitpack" at "https://jitpack.io"
+resolvers ++= Seq(
+  "Maven Central" at "https://repo1.maven.org/maven2/",
+  "Typesafe Repository" at "https://repo.typesafe.com/typesafe/releases/",
+  "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots/",
+  "jitpack" at "https://jitpack.io"
+)

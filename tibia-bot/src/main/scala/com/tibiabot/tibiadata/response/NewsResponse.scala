@@ -3,12 +3,13 @@ package com.tibiabot.tibiadata.response
 import java.time.LocalDate
 
 case class NewsEntry(
-  category: String,
-  date: String,  // Format: "YYYY-MM-DD"
   id: Int,
-  news: String,
-  title: String,
-  url: String
+  date: String,  // Format: "YYYY-MM-DD"
+  news: String,  // This is the title/description
+  category: String,
+  `type`: String,
+  url: String,
+  url_api: Option[String] = None  // Optional as it might not always be present
 )
 
 case class NewsData(
@@ -20,17 +21,22 @@ case class NewsResponse(
   news: NewsData
 )
 
-// News ticker structures
+// News ticker structures - Now using same structure as regular news
 case class NewsTickerEntry(
+  id: Int,
   date: String,  // Format: "YYYY-MM-DD"
-  message: String
+  news: String,  // This is the ticker message
+  category: String,
+  `type`: String,
+  url: String,
+  url_api: String
 )
 
 case class NewsTickerData(
-  newstickers: List[NewsTickerEntry]
+  news: List[NewsTickerEntry]  // Changed from newstickers to news
 )
 
 case class NewsTickerResponse(
   information: Information,
-  newstickers: NewsTickerData
+  news: NewsTickerData  // Changed from newstickers to news
 )

@@ -81,11 +81,11 @@ trait JsonSupport extends SprayJsonSupport with DefaultJsonProtocol {
   implicit val highscoresFormat: RootJsonFormat[Highscores] = jsonFormat6(Highscores)
   implicit val highscoresResponseFormat: RootJsonFormat[HighscoresResponse] = jsonFormat2(HighscoresResponse)
 
-  implicit val newsEntryFormat: RootJsonFormat[NewsEntry] = jsonFormat6(NewsEntry)
+  implicit val newsEntryFormat: RootJsonFormat[NewsEntry] = jsonFormat7(NewsEntry)
   implicit val newsDataFormat: RootJsonFormat[NewsData] = jsonFormat1(NewsData)
   implicit val newsResponseFormat: RootJsonFormat[NewsResponse] = jsonFormat2(NewsResponse)
   
-  implicit val newsTickerEntryFormat: RootJsonFormat[NewsTickerEntry] = jsonFormat2(NewsTickerEntry)
+  implicit val newsTickerEntryFormat: RootJsonFormat[NewsTickerEntry] = jsonFormat7(NewsTickerEntry)
   implicit val newsTickerDataFormat: RootJsonFormat[NewsTickerData] = jsonFormat1(NewsTickerData)
   implicit val newsTickerResponseFormat: RootJsonFormat[NewsTickerResponse] = jsonFormat2(NewsTickerResponse)
 }
